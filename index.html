@@ -496,7 +496,13 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
         overflow: 'hidden',
       }}>
         {filtered.map((p) => (
-          <TileA key={p.n} p={p} T={T} device={device} onClick={() => setOpenId(p.n)} />
+          <TileA key={p.n} p={p} T={T} device={device} onClick={() => {
+            if (p.n === '01') {
+              window.location.href = 'echo-interview_page.html';
+            } else {
+              setOpenId(p.n);
+            }
+          }} />
         ))}
       </div>
 
