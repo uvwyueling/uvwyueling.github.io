@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual Perception of the Machine · 机器的视觉感知</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2ECE0; --paper-2:#E8E0D1; --paper-3:#DED4C2;
+  --ink:#1C1815; --ink-soft:#4E473D; --muted:#8C8273;
+  --line:rgba(28,24,21,.14); --line-2:rgba(28,24,21,.28);
+  --red:#B23A2E; --red-2:#8A2B22; --teal:#19674F; --teal-2:#0E4A39;
+  --serif:"Fraunces","Noto Serif SC",Georgia,serif;
+  --sans:"Hanken Grotesk","Noto Sans SC",-apple-system,sans-serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:17px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--red);
+  transform:scaleX(0);transform-origin:0 50%;z-index:9000;transition:transform .1s linear}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+.col{max-width:680px}
+.over{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);font-weight:700}
+.cn-head{font-family:"Noto Serif SC",var(--serif);font-weight:600}
+
+/* ---------- hero ---------- */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  border-bottom:1px solid var(--line);position:relative}
+.hero .wrap{width:100%}
+.hero .over{margin-bottom:28px}
+.hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(48px,9vw,128px);
+  line-height:.96;letter-spacing:-.02em;max-width:14ch}
+.hero h1 em{font-style:italic;color:var(--red)}
+.hero .zh{font-family:"Noto Serif SC",serif;font-weight:500;font-size:clamp(22px,3.4vw,40px);
+  margin-top:18px;letter-spacing:.04em;color:var(--ink-soft)}
+.hero .sub{margin-top:36px;max-width:54ch;font-size:18px;color:var(--ink-soft)}
+.hero .sub .en{display:block;color:var(--muted);font-size:15px;margin-top:6px}
+.meta{margin-top:48px;display:flex;flex-wrap:wrap;gap:8px 28px;font-family:var(--mono);
+  font-size:12.5px;color:var(--muted)}
+.meta span{white-space:nowrap}
+.cue{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;
+  letter-spacing:.18em;color:var(--muted);text-transform:uppercase;white-space:nowrap;text-align:center}
+.cue::after{content:"";display:block;width:1px;height:34px;background:var(--line-2);margin:10px auto 0;
+  animation:drop 1.8s ease-in-out infinite}
+@keyframes drop{0%,100%{transform:scaleY(.4);opacity:.3}50%{transform:scaleY(1);opacity:1}}
+
+/* ---------- sections ---------- */
+section{padding:120px 0;border-bottom:1px solid var(--line)}
+.shead{margin-bottom:40px}
+.shead h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.5vw,52px);
+  line-height:1.05;letter-spacing:-.01em;margin-top:14px}
+.shead .zh{font-family:"Noto Serif SC",serif;font-size:clamp(18px,2.4vw,26px);color:var(--ink-soft);margin-top:8px}
+p{margin-bottom:1.25em}
+p .en{display:block;color:var(--muted);font-size:15px;margin-top:.35em;line-height:1.6}
+.lead{font-size:21px;line-height:1.7}
+
+.callout{border-left:3px solid var(--teal);background:var(--paper-2);padding:24px 28px;
+  border-radius:0;margin:36px 0;max-width:680px}
+.callout .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal-2);font-weight:700;margin-bottom:10px}
+.callout p{margin:0;font-family:"Noto Serif SC",var(--serif);font-size:19px;line-height:1.7}
+.callout p .en{font-family:var(--sans);color:var(--muted)}
+
+.incidents{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:36px 0}
+.inc{background:var(--paper-2);border:1px solid var(--line);padding:22px 24px}
+.inc .n{font-family:var(--mono);font-size:13px;color:var(--red);font-weight:700;margin-bottom:10px}
+.inc h4{font-family:"Noto Serif SC",serif;font-weight:600;font-size:18px;line-height:1.5;margin-bottom:6px}
+.inc p{margin:0;font-size:13.5px;color:var(--muted);font-family:var(--sans)}
+
+.flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:40px 0 0;
+  font-family:var(--mono);font-size:13px}
+.flow b{background:var(--ink);color:var(--paper);padding:10px 18px;font-weight:400;letter-spacing:.04em}
+.flow i{color:var(--red);font-style:normal;font-size:18px}
+
+/* ---------- scrollytelling ---------- */
+.scrolly{position:relative}
+.scrolly-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:64px;align-items:start}
+.scrolly-gfx{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center}
+.gfx-card{width:100%;background:var(--paper-2);border:1px solid var(--line-2);
+  border-radius:6px;padding:30px;position:relative;min-height:62vh;
+  display:flex;flex-direction:column;justify-content:center}
+.ph-tag{position:absolute;top:12px;right:14px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  border:1px dashed var(--line-2);padding:3px 8px;border-radius:3px}
+.steps .step{min-height:88vh;display:flex;align-items:center}
+.steps .step:first-child{min-height:70vh}
+.step-inner{background:transparent;transition:opacity .4s ease,transform .4s ease;opacity:.32;transform:translateY(6px)}
+.step.active .step-inner{opacity:1;transform:none}
+.step .k{font-family:var(--mono);font-size:12px;color:var(--red);font-weight:700;
+  letter-spacing:.12em;margin-bottom:14px}
+.step h3{font-family:"Noto Serif SC",serif;font-weight:600;font-size:23px;line-height:1.4;margin-bottom:12px}
+.step p{font-size:16px;margin:0;color:var(--ink-soft)}
+.step p .en{font-size:13.5px}
+
+/* fruit gfx */
+.fruit-train{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:18px}
+.fruit-train b{color:var(--ink);font-size:34px;display:block;letter-spacing:0;margin-top:4px}
+.fruit-stage{height:172px;margin-bottom:16px;position:relative;display:flex;align-items:center;justify-content:center}
+.fruit-stage[data-mode="setup"] .fruit-hero{display:none}
+.fruit-stage[data-mode="single"] .fruit-thumbs{display:none}
+.fruit-thumbs{display:flex;gap:10px;align-items:center;justify-content:center;width:100%;height:100%}
+.fruit-thumbs img{width:66px;height:66px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:4px;padding:4px}
+.fruit-hero{height:100%;display:flex;align-items:center;justify-content:center;width:100%}
+.fruit-hero img{max-height:172px;max-width:90%;object-fit:contain;transition:filter .55s ease}
+.machine-sees{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:18px;min-height:18px;text-align:center;letter-spacing:.04em}
+.machine-sees b{color:var(--ink);font-weight:700}
+.machine-sees.wrong b{color:var(--red)}
+.machine-sees.wrong::after{content:" ✗";color:var(--red)}
+.machine-sees.right b{color:var(--teal-2)}
+.machine-sees.right::after{content:" ✓";color:var(--teal-2)}
+.cand{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-family:var(--mono);font-size:12.5px}
+.cand .nm{width:108px;color:var(--ink-soft)}
+.cand .bar{flex:1;height:9px;background:var(--paper-3);border-radius:0;overflow:hidden}
+.cand .fill{height:100%;background:var(--muted);transition:width .5s ease}
+.cand.win .fill{background:var(--teal)} .cand.win .nm{color:var(--teal-2);font-weight:700}
+.cand .pct{width:42px;text-align:right;color:var(--muted)}
+
+/* bias heatmap mini */
+.hm{display:grid;grid-template-columns:118px repeat(5,1fr);gap:5px}
+.hm .ch{font-family:var(--mono);font-size:9.5px;text-align:center;color:var(--ink-soft);
+  line-height:1.35;padding:0 2px 4px;
+  display:flex;align-items:flex-end;justify-content:center;
+  transition:opacity .4s ease}
+.hm .rh{display:flex;align-items:center;justify-content:flex-end;padding-right:8px;
+  font-size:12px;color:var(--ink-soft);font-family:var(--sans);
+  text-align:right;line-height:1.3}
+.hm .cell{height:42px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;color:#2C2C2A;border-radius:4px;
+  border:.5px solid var(--line);transition:opacity .4s ease,box-shadow .4s ease}
+.hm .cell.under{border:2px dashed var(--red-2)}
+.hm.dim [data-col]:not(.hl){opacity:.22}
+.hm .cell.flash{box-shadow:0 0 0 2px var(--ink)}
+.hm-legend{display:flex;align-items:center;gap:8px;margin-top:16px;font-family:var(--mono);
+  font-size:10.5px;color:var(--muted);flex-wrap:wrap}
+.hm-legend .ramp{width:120px;height:9px;border-radius:5px;
+  background:linear-gradient(90deg,rgb(240,149,149),rgb(250,199,117),rgb(159,225,203))}
+
+/* ---------- artifact ---------- */
+.mocks{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:44px}
+.mock{margin:0;display:flex;flex-direction:column;align-items:center;gap:16px}
+.phone{width:100%;max-width:284px;aspect-ratio:9/16;
+  border-radius:22px;overflow:hidden;border:1px solid var(--line-2);
+  background:var(--paper-2);box-shadow:0 6px 26px rgba(28,24,21,.08)}
+.phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.mock figcaption{font-family:var(--mono);font-size:11px;color:var(--muted);
+  text-align:center;letter-spacing:.08em;line-height:1.7;text-transform:uppercase}
+.mock figcaption b{display:block;color:var(--ink-soft);font-weight:500;letter-spacing:.04em;
+  font-size:12.5px;text-transform:none;font-family:"Noto Sans SC",var(--sans);margin-bottom:2px}
+
+/* ---------- footer ---------- */
+footer{padding:90px 0 70px;border-bottom:none}
+.links{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:54px}
+.links a{font-family:var(--mono);font-size:13px;text-decoration:none;color:var(--ink);
+  border:1px solid var(--line-2);padding:12px 22px;border-radius:4px;transition:.2s;letter-spacing:.04em}
+.links a:hover{background:var(--ink);color:var(--paper)}
+.credit{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.9}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.is-in{opacity:1;transform:none}
+
+@media(max-width:860px){
+  body{font-size:16px}
+  .wrap{padding:0 22px}
+  .incidents{grid-template-columns:1fr}
+  .mocks{grid-template-columns:1fr}
+  .scrolly-grid{display:block}
+  .scrolly-gfx{position:sticky;top:0;height:auto;padding:14px 0 18px;
+    background:linear-gradient(var(--paper) 86%,transparent);z-index:5}
+  .gfx-card{min-height:0;padding:20px}
+  .fruit-stage{height:120px}
+  .fruit-hero img{max-height:120px}
+  .fruit-thumbs img{width:48px;height:48px}
+  .steps .step{min-height:78vh}
+  .steps .step:first-child{min-height:30vh}
+  .cue{display:none}
+  .hm{grid-template-columns:90px repeat(5,1fr)}
+  .hm .rh{font-size:11px}
+  .hm .ch{font-size:9px}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="over">Information Design · 信息设计 · 2020</div>
+    <h1>Visual<br>Perception<br>of the <em>Machine</em></h1>
+    <div class="zh">机器的视觉感知</div>
+    <p class="sub">用传播设计打开卷积神经网络这个黑箱。
+      <span class="en">Opening the black box of the convolutional neural network through communication design.</span>
+    </p>
+    <div class="meta">
+      <span>M.Sc. Communication Design</span>
+      <span>Politecnico di Milano · DensityDesign Lab</span>
+      <span>Master's Thesis</span>
+    </div>
+  </div>
+  <div class="cue">Scroll · 向下滚动</div>
+</header>
+
+<!-- ============ 1. PROBLEM ============ -->
+<section>
+  <div class="wrap col reveal">
+    <div class="shead">
+      <div class="over">01 — The Problem</div>
+      <h2>Why this needs explaining</h2>
+      <div class="zh cn-head">为什么需要被讲清楚</div>
+    </div>
+    <p class="lead">算法正在替我们做越来越多的决定——推荐、信贷、招聘、司法风险评估。但模型像一个黑箱：我们既看不懂它如何判断，也无从质疑。
+      <span class="en">Algorithms increasingly decide for us — recommendations, credit, hiring, judicial risk. Yet the models stay opaque: we can neither read how they judge nor question them.</span>
+    </p>
+    <div class="incidents">
+      <div class="inc">
+        <div class="n">CASE 01</div>
+        <h4>简历筛选歧视女性</h4>
+        <p>An AI recruiting tool learned to penalize résumés that mentioned women.</p>
+      </div>
+      <div class="inc">
+        <div class="n">CASE 02</div>
+        <h4>深肤色人群被频繁认错</h4>
+        <p>Face recognition fails far more often for darker-skinned people than lighter.</p>
+      </div>
+    </div>
+    <p>传播设计者的角色，不是把技术变简单，而是把它翻译成大众能用<strong>集体经验</strong>去理解、去批判的形式。
+      <span class="en">The communication designer's role is not to dumb the technology down, but to translate it into a form the public can grasp — and criticize — through shared, everyday experience.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ 2. METHOD ============ -->
+<section>
+  <div class="wrap col reveal">
+    <div class="shead">
+      <div class="over">02 — The Method</div>
+      <h2>Learning ConvNet as an amateur</h2>
+      <div class="zh cn-head">像一个业余爱好者那样去学</div>
+    </div>
+    <p>我把自己当成一个刚入门的业余爱好者去学卷积神经网络：从理论文献，到在线科普视频，再到亲手训练并运行模型。
+      <span class="en">I approached the convolutional neural network the way an amateur would — from theory, to online explainers, to actually training and running the models myself.</span>
+    </p>
+    <div class="callout">
+      <div class="lbl">Core method · 核心方法</div>
+      <p>把机器学习当成「田野」来做实验——固定其他条件，只微调输入的训练数据，观察输出，反推模型的「性格」。
+        <span class="en">Treat machine learning as fieldwork: hold everything else constant, vary only the training data, and read the model's character from what it gets wrong.</span>
+      </p>
+    </div>
+    <div class="flow">
+      <b>INPUT 输入</b><i>→</i><b>PROCESS 处理</b><i>→</i><b>OUTPUT 输出</b>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. EXPERIMENT 01 — FRUIT ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead col reveal">
+      <div class="over">03 — Experiment 01</div>
+      <h2>How much experience to see clearly?</h2>
+      <div class="zh cn-head">实验一 · 看清一个东西，需要多少经验？</div>
+    </div>
+
+    <div class="scrolly" data-scrolly="fruit">
+      <div class="scrolly-grid">
+        <!-- sticky graphic -->
+        <div class="scrolly-gfx">
+          <div class="gfx-card">
+            <div class="fruit-train">Training data 训练量<b id="fruitTrain">—</b></div>
+            <div class="fruit-stage" id="fruitStage" data-mode="setup">
+              <div class="fruit-thumbs">
+                <img src="images/apple_red.jpg" alt="red apple">
+                <img src="images/apple_green.png" alt="green apple">
+                <img src="images/banana.jpg" alt="banana">
+                <img src="images/melon.png" alt="cantaloupe">
+                <img src="images/starfruit.png" alt="starfruit">
+              </div>
+              <div class="fruit-hero">
+                <img id="fruitImg" src="images/apple_green.png" alt="green apple — the protagonist of this scrolly section">
+              </div>
+            </div>
+            <div class="machine-sees" id="machineSees"></div>
+            <div id="fruitCands"></div>
+          </div>
+        </div>
+        <!-- scrolling steps -->
+        <div class="steps">
+          <div class="step active" data-step="0"><div class="step-inner">
+            <div class="k">SETUP · 实验设计</div>
+            <h3>识别 5 种水果，唯一变量是训练集大小</h3>
+            <p>红苹果、青苹果、香蕉、哈密瓜、杨桃；训练量从每种 50 张到 1000 张。
+              <span class="en">Five fruits; the only variable is dataset size — 50 to 1,000 images each.</span></p>
+          </div></div>
+          <div class="step" data-step="1"><div class="step-inner">
+            <div class="k">5% · 50 imgs / fruit</div>
+            <h3>训练量很少时，机器在乱猜</h3>
+            <p>它把这颗青苹果同时认成 starfruit (35%)、banana (30%)、melon (20%)，正确答案 apple_green 只拿到 15%，排第四。
+              <span class="en">Starved of data, the model spreads its guesses — starfruit 35%, banana 30%, melon 20% — and ranks the correct apple_green just fourth at 15%.</span></p>
+          </div></div>
+          <div class="step" data-step="2"><div class="step-inner">
+            <div class="k">10% · 100 imgs / fruit</div>
+            <h3>反直觉：训练量翻倍，正确率归零</h3>
+            <p>多 50 张训练图，机器反而对青苹果<strong>更自信地认错</strong>——starfruit 拿走 90%，apple_green 跌到 0。更多经验不必然带来更好的判断。
+              <span class="en">Doubling the training set flips green apple to zero. The model is now 90% sure it's a starfruit — confidently wrong. More experience isn't automatically better judgment.</span></p>
+          </div></div>
+          <div class="step" data-step="3"><div class="step-inner">
+            <div class="k">25% · 250 imgs / fruit</div>
+            <h3>收敛——但意外仍在别处发生</h3>
+            <p>青苹果重新被认对（70%）。可同一训练量下，<strong>melon 在这里自己跌进坑</strong>：75% 的哈密瓜被认成 banana，正确率只剩 5%。每种水果各有各的"难关"。
+              <span class="en">Green apple recovers to 70%. But at the same training level, melon hits its own crisis — 75% of melons get called bananas, only 5% correctly recognized. Every fruit has its breaking point.</span></p>
+          </div></div>
+          <div class="step" data-step="4"><div class="step-inner">
+            <div class="k">100% · 1000 imgs / fruit</div>
+            <h3>单一、清晰、正确——机器"看清"了</h3>
+            <p>训练量满格时，每种水果都收敛到唯一且正确的答案。机器的视觉从混沌走向聚焦。
+              <span class="en">At full capacity each fruit converges to a single correct answer. The machine's vision moves from chaos to focus.</span></p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. EXPERIMENT 02 — BIAS ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead col reveal">
+      <div class="over">04 — Experiment 02</div>
+      <h2>Who gets seen, who gets mistaken?</h2>
+      <div class="zh cn-head">实验二 · 谁被看见，谁被认错？</div>
+    </div>
+
+    <div class="scrolly" data-scrolly="bias">
+      <div class="scrolly-grid">
+        <div class="scrolly-gfx">
+          <div class="gfx-card">
+            <div class="hm" id="biasGrid"></div>
+            <div class="hm-legend">
+              <span>low recall 召回率低</span><span class="ramp"></span><span>high</span>
+              <span style="margin-left:8px">⌐ dashed = 训练中被低估的组</span>
+            </div>
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step active" data-step="0"><div class="step-inner">
+            <div class="k">SETUP · 实验设计</div>
+            <h3>识别对象变敏感了：肤色与性别</h3>
+            <p>4 个类别（深/浅肤色 × 男/女）× 5 种训练集结构；模型为 ImageNet 预训练的 VGG16。
+              <span class="en">Four groups (darker/lighter × female/male) × five training compositions; an ImageNet-pretrained VGG16.</span></p>
+          </div></div>
+          <div class="step" data-step="1"><div class="step-inner">
+            <div class="k">CONTROL · 均衡对照组</div>
+            <h3>数据均衡时，四类都准</h3>
+            <p>识别率全在 84–89%，证明模型本身没问题。
+              <span class="en">Balanced data → 84–89% across all four. The model itself is fine.</span></p>
+          </div></div>
+          <div class="step" data-step="2"><div class="step-inner">
+            <div class="k">IMBALANCE · 让一边变少</div>
+            <h3>深肤色样本变少，深肤色男塌到 56%</h3>
+            <p>把哪一边的训练样本压低，哪一边就开始被认错。
+              <span class="en">Starve one side of the training set and its recall collapses.</span></p>
+          </div></div>
+          <div class="step" data-step="3"><div class="step-inner">
+            <div class="k">SCARCITY · 极度稀缺</div>
+            <h3>某一组仅占 7%，它的识别率掉到 59%</h3>
+            <p>稀缺到极致的那一组（如深肤色女），被牺牲得最彻底。
+              <span class="en">The scarcest group (e.g. darker female at 7%) is sacrificed hardest.</span></p>
+          </div></div>
+          <div class="step" data-step="4"><div class="step-inner">
+            <div class="k">FINDING · 结论</div>
+            <h3>谁被低估，谁就被认错</h3>
+            <p>所谓算法偏见，不是机器学坏了，而是<strong>社会既有的偏见被代码放大了</strong>。
+              <span class="en">Algorithmic bias isn't the machine going wrong — it's society's existing bias, amplified by code.</span></p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. ARTIFACT ============ -->
+<section>
+  <div class="wrap col reveal">
+    <div class="shead">
+      <div class="over">05 — The Artifact</div>
+      <h2>Designed for the thumb, layered for depth</h2>
+      <div class="zh cn-head">设计落地 · 移动端轻科普网站</div>
+    </div>
+    <p>定位为移动端的轻科普网站。信息分层：<strong>顶层极简，底层复杂</strong>——用户点击或滑动，才进入更深的内容。
+      <span class="en">A mobile-first science site. Information is layered: a simple top layer, a complex layer underneath — reached only when the user taps or swipes in.</span>
+    </p>
+  </div>
+  <div class="wrap reveal">
+    <div class="mocks">
+      <figure class="mock">
+        <div class="phone"><img src="images/fig50.png" alt="实验一交互界面 — fruit experiment interface"></div>
+        <figcaption><b>实验一界面</b>Fig. 50 · Fruit interface</figcaption>
+      </figure>
+      <figure class="mock">
+        <div class="phone"><img src="images/fig56.png" alt="实验二交互界面 — bias experiment interface"></div>
+        <figcaption><b>实验二界面</b>Fig. 56 · Bias interface</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. REFLECTION ============ -->
+<section>
+  <div class="wrap col reveal">
+    <div class="shead">
+      <div class="over">06 — Reflection</div>
+      <h2>What I actually learned</h2>
+      <div class="zh cn-head">反思</div>
+    </div>
+    <p class="lead">最大的收获是理解了：「机器学习」不是机器自己学会了什么，而是<strong>人</strong>用代码和样本把它训练出来的。所谓算法偏见，是社会刻板印象被程序放大的结果。
+      <span class="en">My biggest takeaway: machine learning isn't the machine teaching itself — humans train it with code and samples. Algorithmic bias is a social stereotype, magnified by a program.</span>
+    </p>
+    <p>一个诚实的反思：研究越深，我越从「小白」悄悄滑向「入门者」而不自知，结果初版可视化对普通人太技术化了。<strong>为谁设计，必须被反复校准。</strong>
+      <span class="en">An honest note: the deeper I went, the more I drifted from layperson to insider without noticing — and my first visualizations turned too technical. Who you design for must be re-calibrated, constantly.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="wrap reveal">
+  <div class="credit">
+    Wu Yueling · 吴悦灵<br>
+    Supervisors: Michele Mauri, Beatrice Gobbo<br>
+    Politecnico di Milano · DensityDesign Lab · 2020
+  </div>
+</footer>
+
+<script>
+/* scroll progress */
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){
+  var h=document.documentElement;
+  prog.style.transform='scaleX('+(h.scrollTop/(h.scrollHeight-h.clientHeight||1))+')';
+},{passive:true});
+
+/* reveal on scroll */
+var revObs=new IntersectionObserver(function(es){
+  es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('is-in');});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){revObs.observe(el);});
+
+/* ---- fruit graphic states (real data from thesis Table 4) ---- */
+var fruitStates=[
+  {t:'—',mode:'setup',blur:0,c:[]},
+  {t:'5%',mode:'single',blur:7,sees:{label:'starfruit',pct:35,right:false},
+    c:[['starfruit',35],['banana',30],['melon',20],['apple_green',15,1]]},
+  {t:'10%',mode:'single',blur:9,sees:{label:'starfruit',pct:90,right:false},
+    c:[['starfruit',90],['banana',7],['melon',3],['apple_green',0,1]]},
+  {t:'25%',mode:'single',blur:3,sees:{label:'apple_green',pct:70,right:true},
+    c:[['apple_green',70,1],['starfruit',25],['banana',3],['melon',2]]},
+  {t:'100%',mode:'single',blur:0,sees:{label:'apple_green',pct:100,right:true},
+    c:[['apple_green',100,1]]}
+];
+function renderFruit(i){
+  var s=fruitStates[i]||fruitStates[0];
+  document.getElementById('fruitTrain').textContent=s.t;
+  document.getElementById('fruitStage').dataset.mode=s.mode;
+  document.getElementById('fruitImg').style.filter='blur('+s.blur+'px)';
+  var mEl=document.getElementById('machineSees');
+  if(s.sees){
+    mEl.className='machine-sees '+(s.sees.right?'right':'wrong');
+    mEl.innerHTML='Machine sees · 机器看见：<b>'+s.sees.label+'</b> ('+(s.sees.pct/100).toFixed(2)+')';
+  }else{mEl.className='machine-sees';mEl.innerHTML='';}
+  document.getElementById('fruitCands').innerHTML=s.c.map(function(r){
+    return '<div class="cand'+(r[2]?' win':'')+'"><span class="nm">'+r[0]+'</span>'+
+      '<span class="bar"><span class="fill" style="width:'+r[1]+'%"></span></span>'+
+      '<span class="pct">'+(r[1]/100).toFixed(2)+'</span></div>';
+  }).join('');
+}
+
+/* ---- bias heatmap (real Table 7 data) ---- */
+var cols=[{k:'Average'},{k:'Light>Dark'},{k:'Dark>Light'},{k:'Scarce Darker Female'},{k:'Scarce Lighter Male'}];
+var rows=['Darker Female','Darker Male','Lighter Female','Lighter Male'];
+var data=[[86,78,87,59,88],[89,56,76,75,76],[87,87,74,89,89],[84,82,66,68,57]];
+var under=[[0,1,0,1,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,1,0,1]];
+function lerp(a,b,t){return Math.round(a+(b-a)*t);}
+function hmColor(v){var s0=[240,149,149],s1=[250,199,117],s2=[159,225,203],c;
+  if(v<=75){var t=Math.max(0,(v-55)/20);c=[lerp(s0[0],s1[0],t),lerp(s0[1],s1[1],t),lerp(s0[2],s1[2],t)];}
+  else{var t2=Math.min(1,(v-75)/15);c=[lerp(s1[0],s2[0],t2),lerp(s1[1],s2[1],t2),lerp(s1[2],s2[2],t2)];}
+  return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
+(function buildHm(){
+  var g=document.getElementById('biasGrid'),h='<div></div>';
+  cols.forEach(function(c){h+='<div class="ch">'+c.k+'</div>';});
+  rows.forEach(function(r,ri){
+    h+='<div class="rh">'+r+'</div>';
+    data[ri].forEach(function(v,ci){
+      h+='<div class="cell'+(under[ri][ci]?' under':'')+'" data-col="'+ci+'" style="background:'+hmColor(v)+'">'+v+'%</div>';
+    });
+  });
+  g.innerHTML=h;
+})();
+var biasHl=[[],[0],[1,2],[3,4],[0,1,2,3,4]];
+function renderBias(i){
+  var g=document.getElementById('biasGrid');
+  var hl=biasHl[i]||[];
+  g.classList.toggle('dim',hl.length>0&&hl.length<5);
+  g.querySelectorAll('[data-col]').forEach(function(el){
+    el.classList.toggle('hl',hl.indexOf(+el.dataset.col)>-1);
+  });
+}
+
+/* ---- scrolly observers ---- */
+var renderers={fruit:renderFruit,bias:renderBias};
+renderFruit(0);renderBias(0);
+document.querySelectorAll('[data-scrolly]').forEach(function(sc){
+  var name=sc.dataset.scrolly,steps=[].slice.call(sc.querySelectorAll('.step'));
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        steps.forEach(function(s){s.classList.toggle('active',s===e.target);});
+        if(renderers[name])renderers[name](+e.target.dataset.step);
+      }
+    });
+  },{rootMargin:'-45% 0px -45% 0px',threshold:0});
+  steps.forEach(function(s){obs.observe(s);});
+});
+</script>
+</body>
+</html>
