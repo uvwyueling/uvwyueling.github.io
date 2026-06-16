@@ -33,13 +33,15 @@ const R = (typeof window !== 'undefined' && window.__resources) || {};
 const PROJECTS = [
   {
     n: '07',
-    title: '占位 · Skill 项目',
-    en: 'Placeholder Skill',
+    title: 'Audience-Centered 可视化 Skill',
+    en: 'Audience-Centered Data-Viz Skill',
     year: '2026',
-    role: '占位',
-    desc: '占位项目，用于测试网格布局与吸顶标签条，稍后替换为真实 Skill 项目内容。',
-    tags: [],
-    image: null,
+    role: '设计 / 开发',
+    desc: '',
+    tags: ['AI', 'LLM', '独立开发', '数据可视化', 'Python'],
+    image: R.img07 || 'images/07.png',
+    page: 'data-viz-studio-skill.html',
+    newTab: true,
     links: [],
   },
   {
@@ -52,6 +54,7 @@ const PROJECTS = [
     tags: ['AI', 'LLM', '独立开发', '数据可视化'],
     image: R.img01 || 'images/01.png',
     imageBorder: true,
+    page: 'echo-interview_page.html',
     links: [
       { kind: 'WEBSITE', href: 'https://echo-interview.online/' },
       { kind: 'GITHUB', href: 'https://github.com/uvwyueling/ai-interview-simulator' },
@@ -520,8 +523,12 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
       }}>
         {filtered.map((p) => (
           <TileA key={p.n} p={p} T={T} device={device} onClick={() => {
-            if (p.n === '01') {
-              window.location.href = 'echo-interview_page.html';
+            if (p.page) {
+              if (p.newTab) {
+                window.open(p.page, '_blank', 'noopener');
+              } else {
+                window.location.href = p.page;
+              }
             } else {
               setOpenId(p.n);
             }
