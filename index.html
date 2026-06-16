@@ -32,6 +32,17 @@
 const R = (typeof window !== 'undefined' && window.__resources) || {};
 const PROJECTS = [
   {
+    n: '07',
+    title: '占位 · Skill 项目',
+    en: 'Placeholder Skill',
+    year: '2026',
+    role: '占位',
+    desc: '占位项目，用于测试网格布局与吸顶标签条，稍后替换为真实 Skill 项目内容。',
+    tags: [],
+    image: null,
+    links: [],
+  },
+  {
     n: '01',
     title: '智能模拟面试官',
     en: 'AI Mock Interviewer',
@@ -115,6 +126,17 @@ const PROJECTS = [
     links: [
       { kind: 'WEBSITE', href: 'https://densitydesign.github.io/teaching-dd15/course-results/es02/group08/' },
     ],
+  },
+  {
+    n: '08',
+    title: '占位 · 研究生项目',
+    en: 'Placeholder Grad',
+    year: '2020',
+    role: '占位',
+    desc: '占位项目（研究生时期，年代久远），用于测试网格布局，稍后替换为真实项目内容。',
+    tags: [],
+    image: null,
+    links: [],
   },
 ];
 
@@ -367,9 +389,9 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
     headerCols: '1.25fr 1fr', headerGap: 48,
     slogan: 60, intro: 14, name: 19,
     filterPadX: 48, filterPadY: 14,
-    gridCols: 'repeat(3, 1fr)', gridRows: 'repeat(2, 1fr)',
+    gridCols: 'repeat(3, 1fr)', gridRows: 'none',
     gridGap: 28, gridPadX: 48, gridPadY: 32,
-    tileH: 'auto',
+    tileH: 320,
     drawerW: 572,
   };
 
@@ -380,7 +402,7 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
       background: T.bg, color: T.ink,
       fontFamily: FONT_SANS,
       display: 'flex', flexDirection: 'column',
-      overflow: isDesktop ? 'hidden' : 'visible',
+      overflow: 'visible',
     }}>
       {/* HEAD */}
       <div style={{
@@ -442,6 +464,7 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
 
       {/* FILTER BAR */}
       <div style={{
+        position: 'sticky', top: 0, zIndex: 5,
         display: 'flex',
         alignItems: isTablet ? 'flex-start' : 'center',
         gap: isMobile ? 10 : 16,
@@ -457,7 +480,7 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
           letterSpacing: '0.14em', flexShrink: 0,
           paddingTop: isTablet ? 7 : 0,
         }}>
-          WORKS / 06
+          WORKS / {String(PROJECTS.length).padStart(2, '0')}
         </span>
         <span style={{
           width: 1, height: 14, background: T.rule, flexShrink: 0,
@@ -488,14 +511,12 @@ function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) 
 
       {/* IMAGE WALL */}
       <div style={{
-        flex: isDesktop ? 1 : 'none',
+        flex: 'none',
         padding: `${S.gridPadY}px ${S.gridPadX}px`,
         display: 'grid',
         gridTemplateColumns: S.gridCols,
-        gridTemplateRows: S.gridRows,
-        gridAutoRows: !isDesktop ? `${S.tileH}px` : undefined,
+        gridAutoRows: 'auto',
         gap: S.gridGap,
-        overflow: 'hidden',
       }}>
         {filtered.map((p) => (
           <TileA key={p.n} p={p} T={T} device={device} onClick={() => {
@@ -554,7 +575,7 @@ function TileA({ p, T, device, onClick }) {
         outline: hover ? `2px solid ${T.accent}` : `1px solid ${T.rule}`,
         outlineOffset: hover ? -2 : -1,
         transition: 'outline-color .15s',
-        width: '100%', height: '100%',
+        width: '100%', aspectRatio: '16 / 10',
       }}>
       {/* image */}
       <div style={{
@@ -576,7 +597,7 @@ function TileA({ p, T, device, onClick }) {
           <Placeholder label={p.en.toUpperCase()} theme={T} ratio={undefined} />
         )}
       </div>
-      {/* number badge */}
+      {/* year badge */}
       <span style={{
         position: 'absolute', top: 12, left: 14, zIndex: 2,
         fontFamily: FONT_MONO, fontSize: 11, letterSpacing: '0.1em',
@@ -584,7 +605,7 @@ function TileA({ p, T, device, onClick }) {
         background: T.bg, padding: '3px 8px',
         border: `1px solid ${T.rule}`,
       }}>
-        {p.n}
+        {p.year}
       </span>
       {/* hover/static info bar */}
       <div style={{
@@ -635,14 +656,14 @@ function DrawerA({ project, T, device, drawerW, isDesktop, onClose }) {
     <React.Fragment>
       {/* backdrop */}
       <div onClick={onClose} style={{
-        position: isDesktop ? 'absolute' : 'fixed', inset: 0, zIndex: 10,
+        position: 'fixed', inset: 0, zIndex: 10,
         background: 'rgba(10,14,26,0.32)',
         opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
         transition: 'opacity .25s',
       }} />
       {/* drawer */}
       <aside style={{
-        position: isDesktop ? 'absolute' : 'fixed', top: 0, right: 0, bottom: 0, zIndex: 11,
+        position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 11,
         width: drawerW, maxWidth: '100%',
         background: T.bg,
         borderLeft: isMobile ? 'none' : `1px solid ${T.rule}`,
@@ -654,13 +675,10 @@ function DrawerA({ project, T, device, drawerW, isDesktop, onClose }) {
         {project && (
           <React.Fragment>
             <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
               padding: isMobile ? '18px 20px' : '22px 32px',
               borderBottom: `1px solid ${T.rule}`,
             }}>
-              <span style={{ fontFamily: FONT_MONO, fontSize: 11, color: T.accent, letterSpacing: '0.14em' }}>
-                {project.n} / 06 · {project.year}
-              </span>
               <button onClick={onClose} style={{
                 all: 'unset', cursor: 'pointer',
                 fontFamily: FONT_MONO, fontSize: 11,
@@ -773,12 +791,8 @@ function useDevice() {
 function Root() {
   const VariantA = window.VariantA;
   const device = useDevice();
-  const isDesktop = device === 'desktop';
-  // 桌面：单屏固定高度、不滚动（图墙铺满视口）
-  // 平板 / 手机：自然高度、整页可滚动（长页面）
-  const wrap = isDesktop
-    ? { height: '100vh', overflow: 'hidden' }
-    : { minHeight: '100vh' };
+  // 所有断点：自然高度、整页可滚动（项目持续增加，图墙向下延伸）
+  const wrap = { minHeight: '100vh' };
   return (
     <div style={wrap}>
       <VariantA device={device} />
