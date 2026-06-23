@@ -3,20 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+<link rel="stylesheet" href="fonts/fonts.css">
 </head>
 <body>
 <x-dc>
 <template id="__bundler_thumbnail">
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" fill="#fbf1ea"/>
-    <rect x="30" y="58" width="11" height="14" rx="1.5" fill="#c3c9d0"/>
-    <rect x="45" y="48" width="11" height="24" rx="1.5" fill="#c3c9d0"/>
-    <rect x="60" y="34" width="11" height="38" rx="1.5" fill="#e2611f"/>
+    <rect width="100" height="100" fill="#fbf1ea"></rect>
+    <rect x="30" y="58" width="11" height="14" rx="1.5" fill="#c3c9d0"></rect>
+    <rect x="45" y="48" width="11" height="24" rx="1.5" fill="#c3c9d0"></rect>
+    <rect x="60" y="34" width="11" height="38" rx="1.5" fill="#e2611f"></rect>
   </svg>
 </template>
 <helmet>
-<link rel="stylesheet" href="fonts.css">
 <style>
   *{box-sizing:border-box;}
   body{margin:0;}
@@ -49,10 +48,30 @@
     <!-- 02 · 使用场景 -->
     <div style="padding:24px 40px;border-bottom:1px solid #ededea;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;margin-bottom:14px;">01 · 使用场景</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;">
-        <div><div style="font-weight: 700; font-size: 13px; margin-bottom: 3px; color: #383330">用户是谁</div><p style="margin:0;font-size:12px;color:#5b606b;line-height:1.5;">产品 / 运营 / 研究者 —— 所有需要输出数据洞察的人。</p></div>
-        <div><div style="font-weight: 700; font-size: 13px; margin-bottom: 3px; color: #383330">什么时候</div><p style="margin:0;font-size:12px;color:#5b606b;line-height:1.5;">写汇报、做分享、向非技术同事或领导解释结论时。</p></div>
-        <div><div style="font-weight: 700; font-size: 13px; margin-bottom: 3px; color: #383330">为何更可靠</div><p style="margin:0;font-size:12px;color:#5b606b;line-height:1.5;">先评估受众再约束图型，不像直接画图那样图型随机、受众错配。</p></div>
+      <div style="margin-bottom:18px;">
+        <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">用户是谁</div>
+        <p style="margin: 0; font-size: 12px; color: #5b606b; line-height: 1.6; width: 803px; height: 38px">把数据结论，反复讲给统计学素养比自己弱、或参差不齐、或根本未知背景的人听——可能是领导、跨职能、客户，也可能是一场大型演讲的全场观众。你足够懂数据、挖得出洞察，但不确定该用什么图、做不出可信又好看的图，还得为不同受众一遍遍重做。</p>
+      </div>
+
+      <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #383330">典型场景</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+
+        <div style="background:#faf6f2;border:1px solid #f1e4d9;border-radius:10px;padding:15px;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="color:#c2531a;font-size:13px;">›</span><span style="font-weight:700;font-size:12.5px;color:#383330;">互联网公司</span></div>
+          <p style="margin:0 0 9px;font-size:12px;color:#5b606b;line-height:1.6;">增长分析师跑完一轮 A/B 测试，发现新功能只在某个用户子群里显著拉升了留存，周五要讲给不懂统计的业务负责人。对方看不懂箱线图，只想知道"涨了多少、值不值得全量"。</p>
+          <p style="margin:0;font-size:12px;color:#6b5347;line-height:1.6;border-top:1px dashed #e7d6c8;padding-top:9px;"><span style="color:#c2531a;">→</span> 告诉 skill：受众＝基础型，场合＝团队汇报。它把分布降级成均值条 ＋ 一句"该子群留存高出 X%"的直白标注，同时留一份箱线图版本给数据评审。<strong style="color:#383330;font-weight:600;">同一份数据，两个受众，一次生成。</strong></p>
+        </div>
+
+        <div style="background:#faf6f2;border:1px solid #f1e4d9;border-radius:10px;padding:15px;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="color:#c2531a;font-size:13px;">›</span><span style="font-weight:700;font-size:12.5px;color:#383330;">公共演讲 / 政策沟通</span></div>
+          <p style="margin:0 0 9px;font-size:12px;color:#5b606b;line-height:1.6;">某项研究发现一个生活方式因素与某种慢性病风险相关。研究者要把这个结论带上一场面向公众的健康讲座——台下既有卫生官员、记者，也有普通居民，统计学素养参差、事先无从知晓。</p>
+          <p style="margin:0;font-size:12px;color:#6b5347;line-height:1.6;border-top:1px dashed #e7d6c8;padding-top:9px;"><span style="color:#c2531a;">→</span> 告诉 skill：受众＝未知 / 参差，场合＝公众演讲。按默认规则取基础型——读图能力向下兼容，出一张人人都看得懂的图（避免箱线 / 小提琴，用条形 ＋ 大数字，突出那一个关键数），<strong style="color:#383330;font-weight:600;">让全场不掉队。</strong></p>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">为何更可靠</div>
+        <p style="margin:0;font-size:12px;color:#5b606b;line-height:1.6;">先判断"给谁看"、再约束图型与注释，而不是开局就画——避免图型随机、受众错配。</p>
       </div>
     </div>
 
@@ -197,8 +216,8 @@
       <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;margin-bottom:14px;">05 · 技术 / 设计思考</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
         <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">PROMPT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">Prompt 设计</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">受众分层写成显式判定步骤，先推断再画。</p></div>
-        <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">CONSTRAINT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">约束</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">限定图型集合，禁止对低素养受众用箱线 / 小提琴。</p></div>
-        <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">OUTPUT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">输出标准</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">自包含 HTML + 固定注释地板 + 可访问性。</p></div>
+        <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">CONSTRAINT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">约束</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">限定图型集合，禁止对基础型受众用箱线图 / 小提琴图。</p></div>
+        <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">OUTPUT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">输出标准</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">自包含 HTML + 固定注释密度 + 可访问性。</p></div>
         <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">DELIVERY</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">分阶段交付</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">默认基础版 → 用户确认 → 视觉精修。</p></div>
       </div>
     </div>
@@ -313,5 +332,6 @@ class Component extends DCLogic {
   }
 }
 </script>
+<script src="app.js"></script>
 </body>
 </html>
