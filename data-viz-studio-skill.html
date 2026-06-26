@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="fonts/fonts.css">
+<script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
@@ -16,6 +16,7 @@
   </svg>
 </template>
 <helmet>
+<link rel="stylesheet" href="fonts.css">
 <style>
   *{box-sizing:border-box;}
   body{margin:0;}
@@ -24,19 +25,37 @@
   .ph .ps{font-size:10px;color:#caac96;}
   .chip{font-size:11px;background:#fff;border:1px solid #f1e4d9;color:#6b5347;padding:3px 9px;border-radius:6px;white-space:nowrap;}
   .seg{flex:1;height:5px;border-radius:3px;}
+
+  /* ---- responsive ---- */
+  @media (max-width: 880px){
+    .pg{ padding: 22px 14px 56px !important; }
+  }
+  @media (max-width: 760px){
+    .g4{ grid-template-columns:1fr 1fr !important; }
+  }
+  @media (max-width: 620px){
+    .hero{ padding:24px 20px !important; }
+    .sec{ padding:20px !important; }
+    .cta{ padding:24px 20px !important; flex-direction:column !important; align-items:flex-start !important; gap:16px; }
+    .h-title{ font-size:24px !important; }
+    .g2,.g3,.g4{ grid-template-columns:1fr !important; }
+    .wf{ flex-direction:column !important; align-items:stretch !important; }
+    .wfa{ transform:rotate(90deg); align-self:center; }
+    .hdr{ flex-wrap:wrap; gap:4px; }
+  }
 </style>
 </helmet>
 
-<div style="min-height: 100vh; background: #efe9e3; font-family: 'Noto Sans SC',sans-serif; color: #1f1a17; padding: 44px 24px 80px; display: flex; justify-content: center;">
-  <div style="width:880px;background:#fff;border:1px solid #e7ded4;border-radius:14px;box-shadow:0 26px 70px -34px rgba(90,55,25,.35);overflow:hidden;">
+<div class="pg" style="min-height: 100vh; background: #efe9e3; font-family: 'Noto Sans SC',sans-serif; color: #1f1a17; padding: 44px 24px 80px; display: flex; justify-content: center;">
+  <div class="card" style="width:100%;max-width:880px;background:#fff;border:1px solid #e7ded4;border-radius:14px;box-shadow:0 26px 70px -34px rgba(90,55,25,.35);overflow:hidden;">
 
     <!-- HERO · 定位 -->
-    <div style="background:#fbf1ea;padding:34px 40px;border-bottom:1px solid #f1ddd0;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <div class="hero" style="background:#fbf1ea;padding:34px 40px;border-bottom:1px solid #f1ddd0;">
+      <div class="hdr" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#c2531a;">AGENT SKILL · DATA VIZ STUDIO</span>
         <a href="https://github.com/uvwyueling/data-viz-studio" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#fff;background:#e2611f;padding:6px 14px;border-radius:6px;font-weight:700;text-decoration:none;">GitHub ↗</a>
       </div>
-      <h2 style="font-size: 31px; line-height: 1.24; font-weight: 700; letter-spacing: -.02em; margin: 0 0 11px; text-wrap: balance; color: #383330">把「数据洞察」翻译成 <span style="color: rgb(226, 97, 31);">看得懂的图表</span></h2>
+      <h2 class="h-title" style="font-size: 31px; line-height: 1.24; font-weight: 700; letter-spacing: -.02em; margin: 0 0 11px; text-wrap: balance; color: #383330">把「数据洞察」翻译成 <span style="color: rgb(226, 97, 31);">看得懂的图表</span></h2>
       <p style="font-size:14px;line-height:1.55;color:#6b5347;margin:0 0 16px;">帮你决定用什么图像语言传达数据洞察的 Agent Skill，先判断「给谁看」，再决定「怎么画、注释到什么程度」。</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <span style="font-family: &quot;JetBrains Mono&quot;, monospace; font-size: 11px; background: rgb(255, 255, 255); border: 1px solid rgb(241, 221, 208); color: rgb(107, 83, 71); padding: 5px 12px; border-radius: 20px;">Agent Skill</span>
@@ -46,15 +65,15 @@
     </div>
 
     <!-- 02 · 使用场景 -->
-    <div style="padding:24px 40px;border-bottom:1px solid #ededea;">
+    <div class="sec" style="padding:24px 40px;border-bottom:1px solid #ededea;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;margin-bottom:14px;">01 · 使用场景</div>
       <div style="margin-bottom:18px;">
         <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">用户是谁</div>
-        <p style="margin: 0; font-size: 12px; color: #5b606b; line-height: 1.6; width: 803px; height: 38px">把数据结论，反复讲给统计学素养比自己弱、或参差不齐、或根本未知背景的人听——可能是领导、跨职能、客户，也可能是一场大型演讲的全场观众。你足够懂数据、挖得出洞察，但不确定该用什么图、做不出可信又好看的图，还得为不同受众一遍遍重做。</p>
+        <p style="margin: 0; font-size: 12px; color: #5b606b; line-height: 1.6;">把数据结论，反复讲给统计学素养比自己弱、或参差不齐、或根本未知背景的人听——可能是领导、跨职能、客户，也可能是一场大型演讲的全场观众。你足够懂数据、挖得出洞察，但不确定该用什么图、做不出可信又好看的图，还得为不同受众一遍遍重做。</p>
       </div>
 
       <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #383330">典型场景</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+      <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
 
         <div style="background:#faf6f2;border:1px solid #f1e4d9;border-radius:10px;padding:15px;">
           <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="color:#c2531a;font-size:13px;">›</span><span style="font-weight:700;font-size:12.5px;color:#383330;">互联网公司</span></div>
@@ -76,13 +95,13 @@
     </div>
 
     <!-- 03 · 用户分层原则 (重构自阶梯图) -->
-    <div style="padding:24px 40px;border-bottom:1px solid #ededea;background:#faf6f2;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+    <div class="sec" style="padding:24px 40px;border-bottom:1px solid #ededea;background:#faf6f2;">
+      <div class="hdr" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;">02 · 用户分层原则</span>
         <span style="font-size:11px;color:#9a8a7c;">门槛越高 ↑ 注释越省 ↓</span>
       </div>
       <p style="font-size:12px;color:#6b5347;margin:0 0 14px;">以「能否读懂直方图 / 箱线图」为分界，把受众分三层，分别决定可用图型与注释密度。</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div class="g3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
 
         <!-- 基础型 -->
         <div style="background:#fff;border:1px solid #f1e4d9;border-top:3px solid #f3c9ad;border-radius:10px;padding:15px;display:flex;flex-direction:column;">
@@ -127,25 +146,25 @@
     </div>
 
     <!-- 04 · 工作流 -->
-    <div style="padding:24px 40px;border-bottom:1px solid #ededea;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+    <div class="sec" style="padding:24px 40px;border-bottom:1px solid #ededea;">
+      <div class="hdr" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;">03 · 工作流</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#b08a6e;">{{ wfStatus }}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;">
+      <div class="wf" style="display:flex;align-items:center;gap:6px;">
         <div style="{{ wf0Style }}"><div style="{{ wf0Lbl }}">STEP 1: 输入</div><div style="{{ wf0Body }}">数据集 + 问题</div></div>
-        <span style="{{ arr0Style }}">→</span>
+        <span class="wfa" style="{{ arr0Style }}">→</span>
         <div style="{{ wf1Style }}"><div style="{{ wf1Lbl }}">STEP 2: 判断</div><div style="{{ wf1Body }}">受众层级 + 洞察</div></div>
-        <span style="{{ arr1Style }}">→</span>
+        <span class="wfa" style="{{ arr1Style }}">→</span>
         <div style="{{ wf2Style }}"><div style="{{ wf2Lbl }}">STEP 3: 选型</div><div style="{{ wf2Body }}">图型 + 注释</div></div>
-        <span style="{{ arr2Style }}">→</span>
+        <span class="wfa" style="{{ arr2Style }}">→</span>
         <div style="{{ wf3Style }}"><div style="{{ wf3Lbl }}">STEP 4: 输出</div><div style="{{ wf3Body }}">自包含 HTML</div></div>
       </div>
     </div>
 
     <!-- 04 · 示例结果 (受众切换演示) -->
-    <div style="padding:24px 40px;border-bottom:1px solid #ededea;background:#faf6f2;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+    <div class="sec" style="padding:24px 40px;border-bottom:1px solid #ededea;background:#faf6f2;">
+      <div class="hdr" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;">04 · 示例结果（同一份数据 · 切换受众看图怎么变）</span>
         <span style="font-size:11px;color:#9a8a7c;">点击切换受众层级 →</span>
       </div>
@@ -160,7 +179,8 @@
 
       <!-- chart stage · Magic Move (bars morph into box plots) -->
       <div style="background:#fff;border:1px solid #f1e4d9;border-radius:12px;overflow:hidden;padding:12px 0;">
-        <div style="position:relative;width:720px;height:308px;margin:0 auto;font-family:'Noto Sans SC',sans-serif;">
+        <div ref="{{ chartRef }}" style="{{ chartScaleStyle }}">
+        <div style="{{ chartInnerStyle }}">
 
           <!-- persistent axes -->
           <div style="{{ yAxisLine }}"></div>
@@ -196,6 +216,7 @@
           <div style="{{ footnote }}">箱体 = 中间 50% 数据　·　黑线 = 中位数　·　上下须 = 典型范围</div>
 
         </div>
+        </div>
       </div>
 
       <!-- footer: desc + annotation density meter -->
@@ -212,9 +233,9 @@
     </div>
 
     <!-- 07 · 技术 / 设计思考 (横排四方面) -->
-    <div style="padding:24px 40px;border-bottom:1px solid #ededea;">
+    <div class="sec" style="padding:24px 40px;border-bottom:1px solid #ededea;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#c2531a;margin-bottom:14px;">05 · 技术 / 设计思考</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <div class="g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
         <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">PROMPT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">Prompt 设计</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">受众分层写成显式判定步骤，先推断再画。</p></div>
         <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">CONSTRAINT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">约束</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">限定图型集合，禁止对基础型受众用箱线图 / 小提琴图。</p></div>
         <div style="background:#faf6f2;border-radius:10px;border-top:2px solid #e2611f;padding:14px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#c2531a;margin-bottom:6px;">OUTPUT</div><div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #383330">输出标准</div><p style="margin:0;font-size:11.5px;color:#5b606b;line-height:1.5;">自包含 HTML + 固定注释密度 + 可访问性。</p></div>
@@ -223,7 +244,7 @@
     </div>
 
     <!-- GitHub CTA banner -->
-    <div style="padding:30px 40px;background:#e2611f;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+    <div class="cta" style="padding:30px 40px;background:#e2611f;color:#fff;display:flex;justify-content:space-between;align-items:center;">
       <div><div style="font-size: 19px; font-weight: 700">想自己跑一遍?</div><div style="font-size:12px;color:#ffe0cc;margin-top:3px;">查看源码 · README · 安装方式</div></div>
       <a href="https://github.com/uvwyueling/data-viz-studio" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:14px;background:#fff;color:#e2611f;padding:12px 26px;border-radius:9px;font-weight:700;text-decoration:none;">View on GitHub ↗</a>
     </div>
@@ -233,13 +254,23 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { tier: 0, wfStep: 0 };
+  state = { tier: 0, wfStep: 0, chartW: 720 };
+  chartRef = React.createRef();
   componentDidMount() {
     this._wf = setInterval(() => {
       this.setState((st) => ({ wfStep: (st.wfStep + 1) % 6 }));
     }, 1000);
+    const measure = () => {
+      const el = this.chartRef.current;
+      if (el && el.clientWidth && el.clientWidth !== this.state.chartW) {
+        this.setState({ chartW: el.clientWidth });
+      }
+    };
+    this._ro = new ResizeObserver(measure);
+    if (this.chartRef.current) this._ro.observe(this.chartRef.current);
+    measure();
   }
-  componentWillUnmount() { clearInterval(this._wf); }
+  componentWillUnmount() { clearInterval(this._wf); if (this._ro) this._ro.disconnect(); }
   renderVals() {
     const t = this.state.tier;
     const s = this.state.wfStep;
@@ -309,7 +340,14 @@ class Component extends DCLogic {
     const dens = ['高', '中', '低'];
     const fills = [[true, true, true], [true, true, false], [true, false, false]][t];
     const seg = (on) => ({ width: '20px', height: '6px', borderRadius: '3px', background: on ? '#e2611f' : '#f0d3c0', display: 'inline-block' });
+    const cw = this.state.chartW;
+    const cscale = Math.min(1, cw / 720);
+    const chartScaleStyle = { width: '100%', overflow: 'hidden', height: (308 * cscale) + 'px' };
+    const chartInnerStyle = cscale < 1
+      ? { position: 'relative', width: '720px', height: '308px', fontFamily: "'Noto Sans SC',sans-serif", transformOrigin: 'top left', transform: 'scale(' + cscale + ')', marginLeft: Math.max(0, (cw - 720 * cscale) / 2) + 'px' }
+      : { position: 'relative', width: '720px', height: '308px', fontFamily: "'Noto Sans SC',sans-serif", margin: '0 auto' };
     return {
+      chartRef: this.chartRef, chartScaleStyle, chartInnerStyle,
       selectBasic: () => this.setState({ tier: 0 }),
       selectMid: () => this.setState({ tier: 1 }),
       selectHigh: () => this.setState({ tier: 2 }),
@@ -332,6 +370,5 @@ class Component extends DCLogic {
   }
 }
 </script>
-<script src="app.js"></script>
 </body>
 </html>

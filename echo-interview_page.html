@@ -11,16 +11,16 @@
     .mock-shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.06); }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
 
   <!-- ════════════════════════════════════════════════════════════════
        Single-card portfolio mockup · fits one laptop screen (~1440×900)
        ════════════════════════════════════════════════════════════════ -->
 
-  <div class="w-full max-w-[1240px] bg-white rounded-3xl ring-1 ring-slate-200 ring-soft p-10 lg:p-12">
+  <div class="w-full max-w-[1240px] bg-white rounded-2xl sm:rounded-3xl ring-1 ring-slate-200 ring-soft p-5 sm:p-8 lg:p-12">
 
     <!-- Header ────────────────────────────────────────────────────── -->
-    <div class="flex items-center gap-5 mb-8">
+    <div class="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-8">
       <!-- Microphone icon (top-left brand mark) -->
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 grid place-items-center shadow-lg shadow-indigo-300/50 shrink-0">
         <svg viewBox="0 0 100 100" class="w-7 h-7 text-white" fill="currentColor">
@@ -31,7 +31,7 @@
 
       <div class="flex-1 min-w-0">
         <div class="flex items-baseline gap-3 flex-wrap">
-          <h2 class="text-[28px] font-semibold text-slate-900 tracking-tight leading-none">Echo Interview</h2>
+          <h2 class="text-[22px] sm:text-[28px] font-semibold text-slate-900 tracking-tight leading-none">Echo Interview</h2>
           <span class="text-[15px] text-slate-400 font-medium">AI 模拟面试官</span>
         </div>
         <p class="text-[14px] text-slate-500 mt-2 leading-relaxed">
@@ -55,7 +55,7 @@
     </div>
 
     <!-- 4 Browser-mockup Screenshots (aspect-square = 75% of previous height) -->
-    <div class="grid grid-cols-4 gap-5 mb-9">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 mb-7 sm:mb-9">
 
       <!-- ① Input ─────────────────────────────────────────── -->
       <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden mock-shadow bg-white">
@@ -258,7 +258,7 @@
     </div>
 
     <!-- Highlights row (3 features, each with title + 2 sub-bullets) -->
-    <div class="grid grid-cols-3 gap-8 mb-8 pb-8 border-b border-slate-100">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 pb-8 border-b border-slate-100">
 
       <!-- Feature 1 (豆腐块: icon + title 同行 · bullets 左对齐到 icon) -->
       <div>
@@ -344,9 +344,9 @@
 
       <div class="relative">
         <!-- continuous rail behind the dots -->
-        <div class="absolute top-[5px] left-1 right-1 h-px bg-slate-200"></div>
+        <div class="hidden lg:block absolute top-[5px] left-1 right-1 h-px bg-slate-200"></div>
 
-        <div class="grid grid-cols-5 gap-4 relative">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-6 relative">
           <!-- v0.1 -->
           <div>
             <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
@@ -407,13 +407,13 @@
     </div>
 
     <!-- Footer ─────────────────────────────────────────────────────── -->
-    <div class="flex items-center justify-between gap-6">
-      <div class="flex items-center gap-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8">
         <div>
           <div class="text-[10px] text-slate-400 uppercase tracking-[0.18em] font-semibold mb-1.5">Try it now</div>
           <a href="https://echo-interview.online" class="text-[20px] font-mono font-semibold text-indigo-600 hover:text-indigo-700">echo-interview.online</a>
         </div>
-        <div class="w-px h-10 bg-slate-200"></div>
+        <div class="hidden sm:block w-px h-10 bg-slate-200"></div>
         <div>
           <div class="text-[10px] text-slate-400 uppercase tracking-[0.18em] font-semibold mb-1.5">Stack</div>
           <div class="text-[13px] text-slate-700 font-medium">Next.js 14 · Claude · TypeScript · Zod · Web Speech</div>
