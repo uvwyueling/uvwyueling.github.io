@@ -31,6 +31,46 @@
 // 项目数据 - 数据可视化 / 数据分析 / AI 研究 / 独立开发
 const R = (typeof window !== 'undefined' && window.__resources) || {};
 const PROJECTS = [
+  // ===== 新项目占位符 · 左上角第一位 =====
+  // 待补充：title / en / year / role / desc / tags，
+  // 配图放到 images/09.png 后把 image 改成 R.img09 || 'images/09.png'，
+  // 有独立展示页时打开 page / newTab 两行。
+  {
+    n: '09',
+    title: '学院展厅预约自动化系统',
+    en: 'Exhibition Reservation Automated System',
+    year: '2026',
+    role: '设计 / 开发',
+    desc: '解决本职工作痛点、个人搭建并维护的一套跨前端、轻量数据库与云函数的展览场地预约自动化系统，实现档期自助预约、冲突校验、分级审批与邮件通知的全链路闭环。',
+    tags: ['AI', '全栈', '独立开发','飞书自动化'], 
+    image: R.img00 || 'images/09.jpeg',
+    page: 'exhibition-booking_page.html',
+    newTab: true,
+    links: [
+      { kind: 'DEMO', href: 'https://www.ysxy-exhibition.cloud/demo/' },
+      { kind: 'GITHUB', href: 'https://github.com/uvwyueling/exhibition-booking' },
+    ],
+  },
+
+{
+    n: '01',
+    title: '智能模拟面试官',
+    en: 'AI Mock Interviewer',
+    year: '2026',
+    role: '设计 / 开发 / 可视化',
+    desc: '基于 LLM 的智能模拟面试工具，按目标岗位描述定制问题并生成可视化反馈定位薄弱项。通过竞品调研锁定"反馈可视化 + 垂直岗位"差异化空白，独立完成产品全链路。',
+    tags: ['AI', 'LLM', '独立开发', '数据可视化'],
+    image: R.img01 || 'images/01.png',
+    imageBorder: true,
+    page: 'echo-interview_page.html',
+    links: [
+      { kind: 'WEBSITE', href: 'https://echo-interview.online/' },
+      { kind: 'GITHUB', href: 'https://github.com/uvwyueling/ai-interview-simulator' },
+    ],
+  },
+
+
+
   {
     n: '07',
     title: 'Audience-Centered 可视化 Skill',

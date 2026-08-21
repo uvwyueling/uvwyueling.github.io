@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>艺术学院展厅预约自动化系统</title>
+<meta name="description" content="解决本职工作痛点、个人搭建并维护的内部工具——把原本散落在微信、Excel 和纸质表单里的展览排期流程，收敛成一条链接。">
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* Google Fonts import removed by request — Chinese body copy uses the system stack. */
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: system-ui, -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-heading-weight: 700;
+  --font-body: system-ui, -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<style>
+  body { margin: 0; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+  a { color: var(--color-accent-700); text-underline-offset: 3px; }
+  a:hover { color: var(--color-accent); }
+</style>
+<style>
+.hv0:hover { background: var(--color-bg); color: var(--color-accent); }
+.hv1:hover { background: var(--color-bg); color: var(--color-accent); }
+
+/* ── 图片位 ───────────────────────────────────────────────────────────────
+   所有图片引用都带 ?v=N 版本号，用来打破浏览器缓存。
+   换掉 images/ 里某张图之后，务必把那张图 src 上的 v 加一，
+   否则老访客会一直看到旧图（静态托管默认给图片很长的缓存期）。
+   ─────────────────────────────────────────────────────────────────────── */
+.shot { display: block; width: 100%; height: auto; }
+
+/* 竖版长图：装进定高窗口里自己滚动。
+   窄屏收到 320px，好让「标题 + 两张图 + 说明文字」一屏放得下 */
+.shot-scroll {
+  border: 2px solid var(--color-divider); background: var(--color-surface);
+  height: clamp(320px, 78vw, 400px); overflow-y: auto; overscroll-behavior: contain;
+}
+
+/* 可点开放大的图：整块是个按钮，键盘可聚焦 */
+.zoom {
+  display: block; width: 100%; margin: 0; padding: 0;
+  border: 2px solid var(--color-divider); background: var(--color-surface);
+  font: inherit; color: inherit; cursor: zoom-in; position: relative;
+}
+.zoom::after {
+  content: "点击放大"; position: absolute; right: 10px; bottom: 10px;
+  font-size: 11px; letter-spacing: 0.08em; font-weight: 700;
+  color: var(--color-bg); background: color-mix(in srgb, var(--color-text) 78%, transparent);
+  padding: 5px 9px; opacity: 0; transition: opacity 0.15s;
+}
+.zoom:hover::after, .zoom:focus-visible::after { opacity: 1; }
+.zoom:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.frame { border: 2px solid var(--color-divider); background: var(--color-surface); }
+
+/* ── 全屏查看器 ───────────────────────────────────────────────────────── */
+#viewer[hidden] { display: none; }
+#viewer {
+  position: fixed; inset: 0; z-index: 999;
+  background: color-mix(in srgb, var(--color-text) 95%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+#viewer img {
+  max-width: none; transform-origin: center center;
+  will-change: transform; cursor: grab; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+#viewer img:active { cursor: grabbing; }
+#viewer-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px clamp(14px, 3vw, 28px); pointer-events: none;
+}
+#viewer-cap {
+  flex: 1 1 auto; min-width: 0; font-size: 13px; letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+}
+#viewer-bar button {
+  pointer-events: auto; flex: none; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 700; line-height: 1;
+  color: var(--color-bg); background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--color-bg) 45%, transparent);
+  padding: 8px 12px;
+}
+#viewer-bar button:hover { background: var(--color-accent); border-color: var(--color-accent); }
+#viewer-hint {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; letter-spacing: 0.05em; text-align: center;
+  color: color-mix(in srgb, var(--color-bg) 55%, transparent); pointer-events: none;
+}
+@media (hover: none) { .zoom::after { opacity: 1; } }
+</style>
+</head>
+
+<body>
+
+<div style="background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: 16.5px; line-height: 1.55; padding-bottom: 0;">
+
+  <!-- ══ 1. 标题区 ══ -->
+  <header style="max-width: 1180px; margin: 0 auto; padding: clamp(48px, 8vw, 116px) clamp(20px, 5vw, 72px) clamp(36px, 5vw, 60px);">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: clamp(24px, 3vw, 40px);">
+      <span style="width: 10px; height: 10px; background: var(--color-accent); flex: none;"></span>
+      <span style="font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700;">Case Study · 内部工具</span>
+    </div>
+    <h1 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(34px, 5.6vw, 62px); line-height: 1.14; letter-spacing: -0.02em; margin: 0;">艺术学院展厅<br>预约自动化系统</h1>
+    <p style="font-size: clamp(17px, 1.7vw, 21px); line-height: 1.78; letter-spacing: 0.01em; max-width: 34em; margin: clamp(24px, 3vw, 36px) 0 0; color: color-mix(in srgb, var(--color-text) 88%, transparent);">解决本职工作痛点、个人搭建并维护的内部工具——把原本散落在微信、Excel 和纸质表单里的展览排期流程，收敛成一条链接。</p>
+    <p style="font-size: 14px; line-height: 1.7; letter-spacing: 0.01em; max-width: 40em; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent);">2026 年暑期开发完成并上线，秋季学期投入使用。以下流程均已端到端跑通。</p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: clamp(24px, 5vw, 80px); margin-top: clamp(40px, 5vw, 64px); border-top: 2px solid var(--color-divider); padding-top: clamp(24px, 3vw, 36px);">
+      <div style="flex: 0 1 auto;">
+        <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(34px, 4.4vw, 52px); line-height: 1; color: var(--color-accent); margin: 0;">4</p>
+        <p style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; margin: 12px 0 0; color: color-mix(in srgb, var(--color-text) 70%, transparent);">处场地</p>
+      </div>
+      <div style="flex: 0 1 auto;">
+        <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(34px, 4.4vw, 52px); line-height: 1; color: var(--color-accent); margin: 0;">3</p>
+        <p style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; margin: 12px 0 0; color: color-mix(in srgb, var(--color-text) 70%, transparent);">个平台</p>
+      </div>
+      <div style="flex: 0 1 auto;">
+        <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(34px, 4.4vw, 52px); line-height: 1; color: var(--color-accent); margin: 0;">1</p>
+        <p style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; margin: 12px 0 0; color: color-mix(in srgb, var(--color-text) 70%, transparent);">条链接</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ 2. before / after ══ -->
+  <section style="border-top: 2px solid var(--color-divider);">
+    <div style="max-width: 1180px; margin: 0 auto; padding: clamp(40px, 5vw, 72px) clamp(20px, 5vw, 72px) clamp(40px, 5vw, 72px);">
+      <span style="display: block; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; margin-bottom: clamp(20px, 3vw, 32px);">原来 / 现在</span>
+
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(28px, 4vw, 56px); align-items: flex-end; margin: 0 0 clamp(36px, 5vw, 56px);">
+        <p style="flex: 1 1 380px; min-width: 0; font-size: clamp(18px, 2vw, 24px); line-height: 1.6; letter-spacing: 0.01em; margin: 0; max-width: 30em;">这套手工排期表记录了 2022 年至 2026 年 6 月的
+          <span style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(36px, 5vw, 58px); line-height: 1.1; letter-spacing: -0.02em; color: var(--color-accent); display: inline-block; vertical-align: -0.08em; margin: 0 2px;">122</span> 场展览，平均每年
+          <span style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(36px, 5vw, 58px); line-height: 1.1; letter-spacing: -0.02em; color: var(--color-accent); display: inline-block; vertical-align: -0.08em; margin: 0 2px;">27</span> 场</p>
+        <figure style="flex: 1 1 400px; min-width: 0; margin: 0;">
+          <button type="button" class="zoom" data-caption="旧流程：手工维护的 Numbers 排期表">
+            <img class="shot" src="images/08-manual-schedule.png?v=2" width="3166" height="2122" loading="lazy" decoding="async" alt="迁到系统之前手工维护的 Numbers 排期表：按年分成 2022 至 2026 五个工作表，逐行记录展览名称、布展日期、展览时间、撤展日期、展览位置与指导教师，位置一栏用蓝绿粉三色标出展厅、走廊与花园中庭。">
+          </button>
+          <figcaption style="font-size: 12px; margin-top: 10px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">原来的手工排期表 · 一年一个工作表</figcaption>
+        </figure>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(28px, 4vw, 64px);">
+        <div style="flex: 1 1 320px; min-width: 0;">
+          <div style="display: flex; align-items: baseline; gap: 12px; border-top: 2px solid var(--color-divider); padding-top: 16px; margin-bottom: clamp(20px, 2vw, 28px);">
+            <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.4vw, 28px); letter-spacing: -0.01em; margin: 0;">原来</h2>
+            <span style="font-size: 12px; letter-spacing: 0.1em; color: color-mix(in srgb, var(--color-text) 55%, transparent);">4 处经手</span>
+          </div>
+          <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px;">
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: color-mix(in srgb, var(--color-text) 45%, transparent); padding-top: 5px;">01</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em; color: color-mix(in srgb, var(--color-text) 78%, transparent);">学生在微信里逐个问档期</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: color-mix(in srgb, var(--color-text) 45%, transparent); padding-top: 5px;">02</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em; color: color-mix(in srgb, var(--color-text) 78%, transparent);">我翻手工维护的 Excel 排期表回复</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: color-mix(in srgb, var(--color-text) 45%, transparent); padding-top: 5px;">03</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em; color: color-mix(in srgb, var(--color-text) 78%, transparent);">学生打印纸质申请表、跑一趟办公室递交</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: color-mix(in srgb, var(--color-text) 45%, transparent); padding-top: 5px;">04</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em; color: color-mix(in srgb, var(--color-text) 78%, transparent);">我提醒他布展前交表、发海报</span></li>
+          </ol>
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0;">
+          <div style="display: flex; align-items: baseline; gap: 12px; border-top: 2px solid var(--color-accent); padding-top: 16px; margin-bottom: clamp(20px, 2vw, 28px);">
+            <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.4vw, 28px); letter-spacing: -0.01em; margin: 0;">现在</h2>
+            <span style="font-size: 12px; letter-spacing: 0.1em; color: var(--color-accent-700);">1 处经手</span>
+          </div>
+          <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px;">
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--color-accent); padding-top: 5px;">01</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em;">一条链接：学生自助查看档期并预约</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--color-accent); padding-top: 5px;">02</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em;">系统自动校验冲突、按展期长短分级审批</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start;"><span style="flex: none; width: 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--color-accent); padding-top: 5px;">03</span><span style="font-size: 16.5px; line-height: 1.8; letter-spacing: 0.01em;">自动发出确认邮件</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div style="border-top: 2px solid var(--color-divider); margin-top: clamp(36px, 4vw, 56px); padding-top: clamp(24px, 3vw, 32px); display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 72px); align-items: flex-start;">
+        <span style="flex: none; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; padding-top: 8px;">提效</span>
+        <!-- 两项包在一起，窄屏堆叠时才会彼此左对齐，而不是一项贴着「提效」、一项掉到最左 -->
+        <div style="flex: 1 1 200px; min-width: 0; display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 72px);">
+          <div style="flex: 1 1 260px; min-width: 0;">
+            <p style="font-size: 13px; letter-spacing: 0.04em; margin: 0 0 10px; color: color-mix(in srgb, var(--color-text) 62%, transparent);">单次预约的往返沟通</p>
+            <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(24px, 2.8vw, 34px); line-height: 1.2; letter-spacing: -0.01em; margin: 0;">约 4 次 <span style="color: var(--color-accent);">→</span> 0 次</p>
+          </div>
+          <div style="flex: 1 1 260px; min-width: 0;">
+            <p style="font-size: 13px; letter-spacing: 0.04em; margin: 0 0 10px; color: color-mix(in srgb, var(--color-text) 62%, transparent);">我的经手环节</p>
+            <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(24px, 2.8vw, 34px); line-height: 1.2; letter-spacing: -0.01em; margin: 0;">4 处 <span style="color: var(--color-accent);">→</span> 1 处</p>
+            <p style="font-size: 13px; letter-spacing: 0.02em; margin: 8px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent);">（仅超长展期审批）</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3. 系统架构图 ══ -->
+  <section style="border-top: 2px solid var(--color-divider);">
+    <div style="max-width: 1180px; margin: 0 auto; padding: clamp(40px, 5vw, 72px) clamp(20px, 5vw, 72px);">
+      <span style="display: block; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; margin-bottom: clamp(20px, 3vw, 28px);">系统架构</span>
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 64px); align-items: flex-start;">
+        <h2 style="flex: 1 1 300px; font-family: var(--font-heading); font-weight: 700; font-size: clamp(24px, 2.8vw, 34px); line-height: 1.25; letter-spacing: -0.015em; margin: 0;">三个平台，一条数据链路</h2>
+        <p style="flex: 1 1 340px; min-width: 0; font-size: 16.5px; line-height: 1.85; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 80%, transparent);">前端月历负责展示与自助提交，飞书多维表格是唯一数据源与我的工作台，腾讯云 SCF 上的定时函数负责冲突校验之外的收尾工作——通知、审批状态回读、生成 PDF 与发信。三者之间只有一个方向的依赖：写入表格，再由函数读表。</p>
+      </div>
+      <figure style="margin: clamp(28px, 4vw, 44px) 0 0;">
+              <button type="button" class="zoom" data-caption="系统架构图 · 矢量图，点击可放大"><img class="shot" src="images/architecture.svg?v=1" width="1604" height="1056" loading="lazy" decoding="async" alt="系统架构图：学生在 Vercel 预约页面提交，同源 Serverless 接口重查冲突并按展期长短分级；不超过 10 天写入飞书多维表格并标记「已确认」，超过 10 天标记「审核中」，经飞书自动化推送通知、管理员在表内人工改状态。两条分支合流后由腾讯云函数 SCF 每 5 分钟扫描「已确认且未发信」的记录，发送带《布展申请表》PDF 的确认邮件并回写「已发」标记。"></button>
+              <figcaption style="font-size: 12px; margin-top: 10px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">系统架构图 · 矢量图，点击可放大</figcaption>
+            </figure>
+    </div>
+  </section>
+
+  <!-- ══ 4. 一次预约的旅程 ══ -->
+  <section style="border-top: 2px solid var(--color-divider);">
+    <div style="max-width: 1180px; margin: 0 auto; padding: clamp(40px, 5vw, 72px) clamp(20px, 5vw, 72px) clamp(24px, 3vw, 40px);">
+      <span style="display: block; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; margin-bottom: clamp(16px, 2vw, 24px);">流程</span>
+      <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(26px, 3.4vw, 42px); line-height: 1.2; letter-spacing: -0.02em; margin: 0; max-width: 20em;">一次预约的旅程</h2>
+    </div>
+
+    <div style="max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 72px) clamp(24px, 4vw, 56px);">
+
+      <!-- ① -->
+      <article style="position: relative; display: flex; gap: clamp(14px, 2.4vw, 32px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 48px) 0;">
+        <div style="flex: none; width: clamp(36px, 5vw, 72px); position: relative;">
+          <span style="display: block; width: 10px; height: 10px; background: var(--color-accent);"></span>
+          <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 2.4vw, 30px); line-height: 1; letter-spacing: -0.02em; margin: 14px 0 0;">01</p>
+          
+            <span style="position: absolute; left: 4px; top: 66px; bottom: calc(-1 * clamp(28px, 4vw, 48px) - 2px); width: 2px; background: var(--color-divider);"></span>
+          
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0;">
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">学生自助选档期</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+            <!-- 不换行：两张长图永远左右并列，窄屏时一起等比收窄 -->
+            <div style="flex: 0 1 440px; min-width: 0; display: flex; gap: clamp(10px, 1.6vw, 20px);">
+              <figure style="flex: 1 1 0; min-width: 0; max-width: 210px; margin: 0;">
+              <div class="shot-scroll"><img class="shot" src="images/01-calendar.png?v=1" width="804" height="3642" loading="lazy" decoding="async" alt="前端预约页的三色月历：一屏展示三个月，绿色可约、浅红已被预约、黄色审核中。"></div>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">三色月历 · 可上下滚动</figcaption>
+            </figure>
+              <figure style="flex: 1 1 0; min-width: 0; max-width: 210px; margin: 0;">
+              <div class="shot-scroll"><img class="shot" src="images/07-confirm-page.png?v=1" width="804" height="2314" loading="lazy" decoding="async" alt="预约成功确认页：场地、展期、班级、指导教师、联系人逐项列出，并附下一步的海报规格要求。"></div>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">确认页 · 可上下滚动</figcaption>
+            </figure>
+            </div>
+            <p style="flex: 1 1 300px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">四处场地各自独立排期。月历一次展示三个月，绿色可约、浅红已约、黄色审核中——学生不必再问任何人，打开链接就知道什么时候能用。</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ② -->
+      <article style="position: relative; display: flex; gap: clamp(14px, 2.4vw, 32px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 48px) 0;">
+        <div style="flex: none; width: clamp(36px, 5vw, 72px); position: relative;">
+          <span style="display: block; width: 10px; height: 10px; background: var(--color-accent);"></span>
+          <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 2.4vw, 30px); line-height: 1; letter-spacing: -0.02em; margin: 14px 0 0;">02</p>
+          
+            <span style="position: absolute; left: 4px; top: 66px; bottom: calc(-1 * clamp(28px, 4vw, 48px) - 2px); width: 2px; background: var(--color-divider);"></span>
+          
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0;">
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">预约写入唯一数据源</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+            <figure style="flex: 1 1 380px; min-width: 0; margin: 0;">
+              <button type="button" class="zoom" data-caption="多维表格中的预约记录"><img class="shot" src="images/02-bitable.png?v=1" width="4296" height="1498" loading="lazy" decoding="async" alt="飞书多维表格里的预约记录表，一行一场展览，状态列显示已确认、已驳回、审核中。"></button>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">多维表格中的预约记录</figcaption>
+            </figure>
+            <p style="flex: 1 1 280px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">提交后记录直接落进飞书多维表格。它同时是数据库和我的工作台：所有排期在一张表里，我不用再维护第二份 Excel。</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ③ -->
+      <article style="position: relative; display: flex; gap: clamp(14px, 2.4vw, 32px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 48px) 0;">
+        <div style="flex: none; width: clamp(36px, 5vw, 72px); position: relative;">
+          <span style="display: block; width: 10px; height: 10px; background: var(--color-accent);"></span>
+          <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 2.4vw, 30px); line-height: 1; letter-spacing: -0.02em; margin: 14px 0 0;">03</p>
+          
+            <span style="position: absolute; left: 4px; top: 66px; bottom: calc(-1 * clamp(28px, 4vw, 48px) - 2px); width: 2px; background: var(--color-divider);"></span>
+          
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0;">
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">超长展期自动触发人工介入</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+            <figure style="flex: 1 1 380px; min-width: 0; margin: 0;">
+              <button type="button" class="zoom" data-caption="飞书通知卡片"><img class="shot" src="images/03-feishu-card.png?v=1" width="2674" height="1654" loading="lazy" decoding="async" alt="飞书里收到的「异常展期预订待审核」通知卡片，写明展览名称、场地与起止日期。"></button>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">飞书通知卡片</figcaption>
+            </figure>
+            <p style="flex: 1 1 280px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">展期超过 10 天的预约会自动推送通知到我的飞书，告诉我是哪个班、什么展览、哪位指导教师。系统替我盯着，我不必守着表看。</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ④ -->
+      <article style="position: relative; display: flex; gap: clamp(14px, 2.4vw, 32px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 48px) 0;">
+        <div style="flex: none; width: clamp(36px, 5vw, 72px); position: relative;">
+          <span style="display: block; width: 10px; height: 10px; background: var(--color-accent);"></span>
+          <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 2.4vw, 30px); line-height: 1; letter-spacing: -0.02em; margin: 14px 0 0;">04</p>
+          
+            <span style="position: absolute; left: 4px; top: 66px; bottom: calc(-1 * clamp(28px, 4vw, 48px) - 2px); width: 2px; background: var(--color-divider);"></span>
+          
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0;">
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">我只做真正需要判断的那一步</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+            <figure style="flex: 0 1 auto; width: clamp(170px, 24vw, 260px); margin: 0;">
+              <div class="frame"><img class="shot" src="images/04-mobile-review.png?v=1" width="1206" height="2622" loading="lazy" decoding="async" alt="手机上打开多维表格记录，把状态从「审核中」改成「已确认」的下拉选项。"></div>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">移动端改状态</figcaption>
+            </figure>
+            <p style="flex: 1 1 300px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">与指导教师确认后，我在表里把状态改成「已确认」或「已驳回」。整套流程里需要我动手的，只剩这一次点击。</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ⑤ -->
+      <article style="position: relative; display: flex; gap: clamp(14px, 2.4vw, 32px); border-top: 2px solid var(--color-divider); border-bottom: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 48px) 0;">
+        <div style="flex: none; width: clamp(36px, 5vw, 72px); position: relative;">
+          <span style="display: block; width: 10px; height: 10px; background: var(--color-accent);"></span>
+          <p style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 2.4vw, 30px); line-height: 1; letter-spacing: -0.02em; margin: 14px 0 0;">05</p>
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0;">
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">确认邮件自动送达</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+            <figure style="flex: 0 1 auto; width: clamp(170px, 22vw, 240px); margin: 0;">
+              <div class="frame"><img class="shot" src="images/05-confirm-email.png?v=1" width="1206" height="2622" loading="lazy" decoding="async" alt="学生邮箱里收到的确认信：展览名称、场地、布展与撤展日期、指导教师，并附一份《布展申请表》PDF。"></div>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">学生收到的确认信</figcaption>
+            </figure>
+            <p style="flex: 1 1 320px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">状态一变，云函数在下一轮扫描时自动发出确认邮件——收件人、场地、日期、海报规格都已填好，这一步全程无人参与。确认信附一份填好的《布展申请表》PDF，字段从飞书记录自动填充、场地按单选自动打勾；腾讯云 SCF 里没有排版引擎，是用 pdfkit 直接生成、内嵌开源中文字体。</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(16px, 2.4vw, 28px); margin-top: clamp(24px, 3vw, 36px);">
+            <figure style="flex: 1 1 300px; min-width: 0; margin: 0;">
+              <button type="button" class="zoom" data-caption="SCF 定时触发规则"><img class="shot" src="images/06-scf-trigger.png?v=1" width="3166" height="1732" loading="lazy" decoding="async" alt="腾讯云 SCF 控制台的触发管理页，定时触发器的 cron 表达式为 0 */5 * * * ?，即每 5 分钟一次。"></button>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">SCF 定时触发规则</figcaption>
+            </figure>
+            <figure style="flex: 1 1 300px; min-width: 0; margin: 0;">
+              <button type="button" class="zoom" data-caption="自动填好的《布展申请表》"><img class="shot" src="images/09-pdf-form.png?v=1" width="2088" height="1468" loading="lazy" decoding="async" alt="自动生成的《布展申请表》PDF：各字段由飞书记录填好，展览场地一栏按单选自动打勾。"></button>
+              <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">自动填好的《布展申请表》</figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ 5. 决策与取舍 ══ -->
+  <section>
+    <div style="max-width: 1180px; margin: 0 auto; padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 72px) clamp(20px, 3vw, 32px);">
+      <span style="display: block; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; margin-bottom: clamp(16px, 2vw, 24px);">取舍</span>
+      <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(28px, 4vw, 48px); line-height: 1.18; letter-spacing: -0.02em; margin: 0;">决策与取舍</h2>
+    </div>
+
+    <div style="max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 72px) clamp(48px, 7vw, 88px);">
+
+      <article style="display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 44px) 0;">
+        <div style="flex: 1 1 300px; min-width: 0;">
+          <span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 14px;">Q1</span>
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.6vw, 31px); line-height: 1.32; letter-spacing: -0.015em; margin: 0;">为什么 10 天是分界线？</h3>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <p style="font-size: 17px; line-height: 1.95; letter-spacing: 0.01em; margin: 0;">这是业务判断，不是技术判断。展厅是学院公共资源，课程作业展通常一周内结束、周转快；而占用超过两周的多半是学院级展览，需要和指导教师确认排期、协调后续档期。把 10 天以内的交给学生自助秒过，覆盖了绝大多数申请；超过的转人工。人工审核的名额，要留给真正需要判断的那几场。</p>
+        </div>
+      </article>
+
+      <article style="display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 44px) 0;">
+        <div style="flex: 1 1 300px; min-width: 0;">
+          <span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 14px;">Q2</span>
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.6vw, 31px); line-height: 1.32; letter-spacing: -0.015em; margin: 0;">为什么「审核中」也要占住档期、显示成黄色？</h3>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <p style="font-size: 17px; line-height: 1.95; letter-spacing: 0.01em; margin: 0;">如果不占住，我正在跟指导教师确认天数的时候，这个档期已经被别人自助约走了。黄色是一种诚实的表达：它既不是「可约」也不是「已定」，别人点到会提示 24 小时后再来看。代价是短期锁定一段档期，但这比撤销一个已经确认的预约代价小得多。</p>
+        </div>
+      </article>
+
+      <article style="display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 44px) 0;">
+        <div style="flex: 1 1 300px; min-width: 0;">
+          <span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 14px;">Q3</span>
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.6vw, 31px); line-height: 1.32; letter-spacing: -0.015em; margin: 0;">为什么写入数据库前要再查一次冲突？</h3>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <p style="font-size: 17px; line-height: 1.95; letter-spacing: 0.01em; margin: 0;">学生看到的月历，是他打开页面那一刻的快照。而填表要花几分钟，这几分钟里别人可能已经约走了同一段。所以提交时后端会重新拉一次数据、逐条比对区间重叠，撞上了就返回冲突、把人退回月历重选。前端的颜色是提示，后端的校验才是真相。</p>
+        </div>
+      </article>
+
+      <article style="display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); border-top: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 44px) 0;">
+        <div style="flex: 1 1 300px; min-width: 0;">
+          <span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 14px;">Q4</span>
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.6vw, 31px); line-height: 1.32; letter-spacing: -0.015em; margin: 0;">为什么确认邮件用「定时扫描 + 回写已发标记」，而不是提交即发？</h3>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <p style="font-size: 17px; line-height: 1.95; letter-spacing: 0.01em; margin: 0;">提交即发有两个隐患：发信失败邮件就永远丢了，而学生和我都不会知道；发信本身也会拖慢提交响应。改成定时扫描「已确认且尚未发信」的记录、发完回写标记，就换来了幂等性：失败的下一轮自动重试，发过的绝不重复发。代价是几分钟延迟，但对一场几周后的展览，这点延迟毫无影响。</p>
+          <div style="display: flex; gap: clamp(12px, 1.6vw, 18px); margin-top: clamp(20px, 2.4vw, 28px);">
+            <span style="flex: none; width: 2px; background: var(--color-accent); opacity: 0.55;"></span>
+            <div>
+              <span style="display: block; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 50%, transparent); font-weight: 700; margin-bottom: 8px;">意外收获</span>
+              <p style="font-size: 16px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 62%, transparent);">这个设计还有个意外收获：它筛的是「状态为已确认」，而不是「状态刚刚发生变化」。于是自助秒过的短展和人工审批通过的长展，被同一条规则覆盖了，我不需要为两条路各写一遍逻辑。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article style="display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 56px); border-top: 2px solid var(--color-divider); border-bottom: 2px solid var(--color-divider); padding: clamp(28px, 4vw, 44px) 0;">
+        <div style="flex: 1 1 300px; min-width: 0;">
+          <span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 14px;">Q5</span>
+          <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(22px, 2.6vw, 31px); line-height: 1.32; letter-spacing: -0.015em; margin: 0;">为什么不做自助改约 / 取消？</h3>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <p style="font-size: 17px; line-height: 1.95; letter-spacing: 0.01em; margin: 0;">因为改约低频，而且往往牵扯沟通——要跟指导教师改期、要和相邻档期的班级协调。做成自助功能就得处理一连串边界情况：改到冲突档期怎么办、已经发出的确认邮件怎么撤回、别人基于这次取消抢先约走了怎么办。而这些情况一年只发生几次，我在表里手动改两分钟就解决了。</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ 6. 底部链接区 ══ -->
+  
+    <section style="background: var(--color-accent); color: var(--color-bg);">
+      <div style="max-width: 1180px; margin: 0 auto; padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 72px);">
+        <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(28px, 4.4vw, 54px); line-height: 1.16; letter-spacing: -0.02em; margin: 0; max-width: 22em;">一条链接，跑完整个流程。</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: clamp(12px, 2vw, 20px); margin-top: clamp(28px, 4vw, 44px);">
+          <a href="https://ysxy-exhibition.cloud/demo" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 700; font-size: 15px; text-decoration: none; color: var(--color-bg); border: 2px solid var(--color-bg); padding: 12px 18px; max-width: 100%; overflow-wrap: anywhere;" class="hv0">在线 Demo: ysxy-exhibition.cloud/demo</a>
+          <a href="https://github.com/uvwyueling/exhibition-booking" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 700; font-size: 15px; text-decoration: none; color: var(--color-bg); border: 2px solid var(--color-bg); padding: 12px 18px; max-width: 100%; overflow-wrap: anywhere;" class="hv1">GitHub 仓库: https://github.com/uvwyueling/exhibition-booking</a>
+        </div>
+      </div>
+    </section>
+
+  
+
+</div>
+
+<!-- ══ 全屏图片查看器 ══ -->
+<div id="viewer" hidden role="dialog" aria-modal="true" aria-label="图片全屏查看">
+  <img id="viewer-img" alt="">
+  <div id="viewer-bar">
+    <span id="viewer-cap"></span>
+    <button type="button" data-act="out" aria-label="缩小">−</button>
+    <button type="button" data-act="fit" aria-label="适应屏幕">适应</button>
+    <button type="button" data-act="in" aria-label="放大">＋</button>
+    <button type="button" data-act="close" aria-label="关闭">关闭  esc</button>
+  </div>
+  <p id="viewer-hint">滚轮或双指缩放 · 拖动平移 · 双击切换</p>
+</div>
+
+<script>
+(function () {
+  var viewer = document.getElementById('viewer');
+  var img    = document.getElementById('viewer-img');
+  var cap    = document.getElementById('viewer-cap');
+
+  var scale = 1, fit = 1, tx = 0, ty = 0;
+  var natW = 0, natH = 0, opener = null;
+  var pointers = new Map(), pinch = null, pan = null;
+
+  function apply() {
+    img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+  }
+
+  // 适应屏幕：留出边距，且不把小图硬撑到大于原始尺寸
+  function fitToScreen() {
+    var pad = window.innerWidth < 640 ? 16 : 56;
+    fit = Math.min((viewer.clientWidth - pad * 2) / natW,
+                   (viewer.clientHeight - pad * 2 - 40) / natH, 1);
+    scale = fit; tx = 0; ty = 0; apply();
+  }
+
+  // 平移范围：图比屏幕大多少，就允许拖多少
+  function clampPan() {
+    var mx = Math.max(0, (natW * scale - viewer.clientWidth) / 2);
+    var my = Math.max(0, (natH * scale - viewer.clientHeight) / 2);
+    tx = Math.min(mx, Math.max(-mx, tx));
+    ty = Math.min(my, Math.max(-my, ty));
+  }
+
+  // 以 (cx,cy) 为锚点缩放，锚点下的像素保持不动
+  function zoomAt(cx, cy, factor) {
+    factor = Math.min(2, Math.max(0.5, factor));   // 单次别跳太狠
+    var next = Math.min(fit * 16, Math.max(fit * 0.9, scale * factor));
+    if (next === scale) return;
+    var r = viewer.getBoundingClientRect();
+    var ox = cx - r.left - r.width / 2, oy = cy - r.top - r.height / 2;
+    tx = ox - (ox - tx) * (next / scale);
+    ty = oy - (oy - ty) * (next / scale);
+    scale = next; clampPan(); apply();
+  }
+
+  function open(btn) {
+    var src = btn.querySelector('img');
+    opener = btn;
+    cap.textContent = btn.getAttribute('data-caption') || '';
+    img.alt = src.alt;
+    img.src = src.currentSrc || src.src;
+    viewer.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    var start = function () {
+      natW = img.naturalWidth || parseFloat(src.getAttribute('width')) || 1000;
+      natH = img.naturalHeight || parseFloat(src.getAttribute('height')) || 700;
+      img.style.width = natW + 'px'; img.style.height = natH + 'px';
+      fitToScreen();
+    };
+    if (img.complete && img.naturalWidth) start(); else img.onload = start;
+    viewer.querySelector('[data-act="close"]').focus();
+  }
+
+  function close() {
+    viewer.hidden = true;
+    img.removeAttribute('src');
+    document.documentElement.style.overflow = '';
+    if (opener) { opener.focus(); opener = null; }
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.zoom');
+    if (btn) { e.preventDefault(); open(btn); }
+  });
+
+  viewer.addEventListener('click', function (e) {
+    var act = e.target.getAttribute && e.target.getAttribute('data-act');
+    if (act === 'close') return close();
+    if (act === 'fit')   return fitToScreen();
+    if (act === 'in')    return zoomAt(innerWidth / 2, innerHeight / 2, 1.6);
+    if (act === 'out')   return zoomAt(innerWidth / 2, innerHeight / 2, 1 / 1.6);
+    if (e.target === viewer) close();          // 点背景关闭，点图不关
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (viewer.hidden) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === '+' || e.key === '=') zoomAt(innerWidth / 2, innerHeight / 2, 1.6);
+    else if (e.key === '-') zoomAt(innerWidth / 2, innerHeight / 2, 1 / 1.6);
+    else if (e.key === '0') fitToScreen();
+  });
+
+  // 滚轮 / 触控板双指：ctrlKey 是浏览器给捏合手势的标志
+  viewer.addEventListener('wheel', function (e) {
+    if (viewer.hidden) return;
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0022)));
+  }, { passive: false });
+
+  img.addEventListener('dblclick', function (e) {
+    if (scale > fit * 1.05) fitToScreen();
+    else zoomAt(e.clientX, e.clientY, 2.5);
+  });
+
+  // 触屏：一指拖动，两指捏合
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  function mid(a, b)  { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+
+  viewer.addEventListener('pointerdown', function (e) {
+    if (e.target.closest('#viewer-bar')) return;
+    viewer.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    var pts = [].concat(Array.from(pointers.values()));
+    if (pts.length === 2) { pinch = { d: dist(pts[0], pts[1]), m: mid(pts[0], pts[1]) }; pan = null; }
+    else if (pts.length === 1) { pan = { x: e.clientX - tx, y: e.clientY - ty }; }
+  });
+
+  viewer.addEventListener('pointermove', function (e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    var pts = Array.from(pointers.values());
+    if (pts.length >= 2 && pinch) {
+      var d = dist(pts[0], pts[1]), m = mid(pts[0], pts[1]);
+      if (pinch.d > 0) zoomAt(m.x, m.y, d / pinch.d);
+      tx += m.x - pinch.m.x; ty += m.y - pinch.m.y;
+      clampPan(); apply();
+      pinch = { d: d, m: m };
+    } else if (pan) {
+      tx = e.clientX - pan.x; ty = e.clientY - pan.y;
+      clampPan(); apply();
+    }
+  });
+
+  function release(e) {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinch = null;
+    if (pointers.size === 0) pan = null;
+    else { var p = Array.from(pointers.values())[0]; pan = { x: p.x - tx, y: p.y - ty }; }
+  }
+  viewer.addEventListener('pointerup', release);
+  viewer.addEventListener('pointercancel', release);
+
+  window.addEventListener('resize', function () { if (!viewer.hidden) fitToScreen(); });
+})();
+</script>
+
+</body></html>

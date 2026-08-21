@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1604" height="1056" viewBox="0 0 1604 1056" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
+<title id="archTitle">展览场地预约自动化系统 · 跨三平台协作架构图</title>
+<desc id="archDesc">学生在 Vercel 预约页面提交，同源 Serverless 接口重查冲突并按展期长短分级；展期不超过 10 天写入飞书多维表格并标记「已确认」，超过 10 天标记「审核中」，由飞书自动化推送通知、管理员人工改状态。两条分支合流后由腾讯云函数 SCF 每 5 分钟扫描「已确认且未发信」的记录，发送带《布展申请表》PDF 的确认邮件，并回写「已发」标记。</desc>
+
+<style>
+  .f     { font-family: system-ui, -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+  .kick  { font-size: 10.5px; font-weight: 700; letter-spacing: 1.7px; }
+  .h1    { font-size: 27px;   font-weight: 700; letter-spacing: -0.3px; fill: #1f1d1a; }
+  .sub   { font-size: 14px;   fill: #5f5952; }
+  .ptitle{ font-size: 17px;   font-weight: 700; fill: #1f1d1a; }
+  .pmeta { font-size: 11.5px; fill: #7d7770; }
+  .ctitle{ font-size: 14.5px; font-weight: 700; fill: #1f1d1a; }
+  .cbody { font-size: 12px;   fill: #5f5952; }
+  .note  { font-size: 11.5px; fill: #8a8480; }
+  .tag   { font-size: 12px;   font-weight: 700; fill: #35312c; }
+  .lg    { font-size: 12px;   fill: #5f5952; }
+  .card  { fill: #ffffff; stroke: #e7e4e0; stroke-width: 1.2; }
+  .flow  { fill: none; stroke: #6f6963; stroke-width: 1.8; }
+  .read  { fill: none; stroke: #9b9590; stroke-width: 1.6; stroke-dasharray: 7 6; }
+</style>
+
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,1 L10,5 L0,9 z" fill="#6f6963"/>
+  </marker>
+  <marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,1 L10,5 L0,9 z" fill="#9b9590"/>
+  </marker>
+</defs>
+
+<rect width="1604" height="1056" fill="#fbfaf8"/>
+
+<!-- ══ 页眉 ══ -->
+<g class="f">
+  <text x="36" y="46"  class="kick" fill="#9b9590">SYSTEM ARCHITECTURE</text>
+  <text x="36" y="90"  class="h1">展览场地预约自动化系统</text>
+  <text x="36" y="126" class="sub">跨三平台协作：Vercel 承载前端与同源接口，飞书多维表格作为唯一数据源与人工审批入口，腾讯云函数 SCF 负责定时发信。</text>
+</g>
+
+<rect x="32" y="150" width="1540" height="826" rx="16" fill="#fdfcfa" stroke="#eeebe7" stroke-width="1.2"/>
+
+<!-- ══ 三个平台底板 ══ -->
+<rect x="184"  y="240" width="234" height="640" rx="12" fill="#eff5fc"/>
+<rect x="514"  y="240" width="712" height="640" rx="12" fill="#eaf9f1"/>
+<rect x="1272" y="240" width="266" height="640" rx="12" fill="#fef2e5"/>
+
+<!-- ══ 连线（先画，压在卡片下） ══ -->
+<g>
+  <!-- 学生 → 预约页面 -->
+  <path class="flow" d="M166,548 H175 V400 H198" marker-end="url(#ah)"/>
+  <!-- 预约页面 → Serverless 接口 -->
+  <path class="flow" d="M301,456 V506" marker-end="url(#ah)"/>
+  <!-- 预约记录表 ⇢ 读档期 ⇢ Serverless 接口（读档期的是接口，不是页面） -->
+  <path class="read" d="M536,371 H458 V486 H360 V506" marker-end="url(#ahd)"/>
+  <!-- Serverless 接口 → 展期长度 -->
+  <path class="flow" d="M398,568 H422" marker-end="url(#ah)"/>
+  <!-- ≤ 10 天 → 写入「已确认」 -->
+  <path class="flow" d="M508,568 H748" marker-end="url(#ah)"/>
+  <!-- &gt; 10 天 → 写入「审核中」 -->
+  <path class="flow" d="M468,614 V738 H748" marker-end="url(#ah)"/>
+  <!-- 写入「审核中」 → 飞书自动化 → 管理员审批 -->
+  <path class="flow" d="M910,738 H918" marker-end="url(#ah)"/>
+  <path class="flow" d="M1062,738 H1066" marker-end="url(#ah)"/>
+  <!-- 管理员审批 → 合流点 -->
+  <path class="flow" d="M1204,738 H1240 V568"/>
+  <!-- 合流 → 定时扫描 -->
+  <path class="flow" d="M910,568 H1288" marker-end="url(#ah)"/>
+  <circle cx="1240" cy="568" r="5" fill="#6f6963"/>
+  <!-- SCF 内部三步 -->
+  <path class="flow" d="M1405,612 V654" marker-end="url(#ah)"/>
+  <path class="flow" d="M1405,760 V794" marker-end="url(#ah)"/>
+  <!-- 回写「已发」标记 ⇢ 预约记录表 -->
+  <path class="read" d="M1516,828 H1552 V371 H1216" marker-end="url(#ahd)"/>
+  <!-- 确认邮件 → 学生 -->
+  <path class="flow" d="M1294,710 H1262 V920 H110 V622" marker-end="url(#ah)"/>
+</g>
+
+<!-- ══ 学生 ══ -->
+<g class="f">
+  <rect x="54" y="486" width="112" height="124" rx="10" fill="#fbfaf8" stroke="#b8b2ac" stroke-width="1.4" stroke-dasharray="6 5"/>
+  <text x="110" y="530" class="ctitle" text-anchor="middle" font-size="15.5">学生</text>
+  <text x="110" y="560" class="cbody" text-anchor="middle">提交预约</text>
+  <text x="110" y="582" class="cbody" text-anchor="middle">接收邮件</text>
+</g>
+
+<!-- ══ PLATFORM 01 · Vercel ══ -->
+<g class="f">
+  <text x="204" y="276" class="kick" fill="#5b83b0">PLATFORM 01</text>
+  <text x="204" y="304" class="ptitle">Vercel</text>
+  <text x="204" y="328" class="pmeta">前端页面 + 同源 Serverless 接口</text>
+
+  <rect class="card" x="204" y="344" width="194" height="112" rx="8"/>
+  <text x="220" y="374" class="ctitle">预约页面</text>
+  <text x="220" y="400" class="cbody">选择场地</text>
+  <text x="220" y="422" class="cbody">三色月历看档期</text>
+  <text x="220" y="444" class="cbody">填表提交</text>
+
+  <rect class="card" x="204" y="512" width="194" height="112" rx="8"/>
+  <text x="220" y="542" class="ctitle">Serverless 接口</text>
+  <text x="220" y="568" class="cbody">读档期给月历</text>
+  <text x="220" y="590" class="cbody">写入前重查冲突</text>
+  <text x="220" y="612" class="cbody">按展期长短分级</text>
+
+  <text x="204" y="676" class="note">分级在接口内完成：</text>
+  <text x="204" y="696" class="note">请求写入飞书表时，状态已经</text>
+  <text x="204" y="716" class="note">定好。</text>
+</g>
+
+<!-- ══ 分流判断 ══ -->
+<g class="f">
+  <path d="M468,522 L508,568 L468,614 L428,568 Z" fill="#ffffff" stroke="#cfcac4" stroke-width="1.4"/>
+  <text x="468" y="564" class="tag" text-anchor="middle">展期</text>
+  <text x="468" y="584" class="tag" text-anchor="middle">长度</text>
+
+  <rect x="566" y="553" width="68" height="30" rx="15" fill="#ffffff" stroke="#d8d3cd" stroke-width="1.2"/>
+  <text x="600" y="573" class="tag" text-anchor="middle">≤ 10 天</text>
+
+  <rect x="434" y="646" width="68" height="30" rx="15" fill="#ffffff" stroke="#d8d3cd" stroke-width="1.2"/>
+  <text x="468" y="666" class="tag" text-anchor="middle">&gt; 10 天</text>
+
+  <rect x="466" y="357" width="62" height="28" rx="14" fill="#fdfcfa" stroke="#e2ded9" stroke-width="1.1"/>
+  <text x="497" y="376" class="note" text-anchor="middle" font-size="11">读档期</text>
+</g>
+
+<!-- ══ PLATFORM 02 · 飞书多维表格 ══ -->
+<g class="f">
+  <text x="536" y="276" class="kick" fill="#3f8a61">PLATFORM 02</text>
+  <text x="536" y="304" class="ptitle">飞书多维表格</text>
+  <text x="536" y="328" class="pmeta">数据层：唯一数据源 · 管理员人工审批 · 飞书自动化</text>
+
+  <rect class="card" x="536" y="344" width="668" height="54" rx="8"/>
+  <text x="556" y="377" class="ctitle" font-size="15">预约记录表 · 唯一数据源</text>
+  <text x="1186" y="377" class="pmeta" text-anchor="end">存全部预约记录 · 管理员在此人工审批</text>
+
+  <text x="1186" y="492" class="tag" text-anchor="end" font-size="12.5">两条分支在此合流</text>
+  <text x="1186" y="514" class="note" text-anchor="end">短展与长展共用同一条发信规则，没有两套逻辑</text>
+
+  <rect class="card" x="754" y="530" width="156" height="76" rx="8"/>
+  <text x="772" y="560" class="ctitle">写入记录</text>
+  <text x="772" y="586" class="cbody">状态「已确认」</text>
+
+  <rect class="card" x="754" y="700" width="156" height="76" rx="8"/>
+  <text x="772" y="730" class="ctitle">写入记录</text>
+  <text x="772" y="756" class="cbody">状态「审核中」</text>
+
+  <rect class="card" x="924" y="690" width="138" height="96" rx="8"/>
+  <text x="940" y="720" class="ctitle">飞书自动化</text>
+  <text x="940" y="746" class="cbody">展期 &gt; 10 天时推</text>
+  <text x="940" y="766" class="cbody">送通知给管理员</text>
+
+  <rect class="card" x="1072" y="690" width="132" height="96" rx="8"/>
+  <text x="1088" y="720" class="ctitle">管理员审批</text>
+  <text x="1088" y="746" class="cbody">在表内人工把状态</text>
+  <text x="1088" y="766" class="cbody">改为「已确认」</text>
+</g>
+
+<!-- ══ PLATFORM 03 · 腾讯云函数 SCF ══ -->
+<g class="f">
+  <text x="1294" y="276" class="kick" fill="#b07a3c">PLATFORM 03</text>
+  <text x="1294" y="304" class="ptitle">腾讯云函数 SCF</text>
+  <text x="1294" y="328" class="pmeta">自动化层：定时扫描与发信</text>
+
+  <rect class="card" x="1294" y="524" width="222" height="88" rx="8"/>
+  <text x="1312" y="556" class="ctitle">定时扫描 · 每 5 分钟</text>
+  <text x="1312" y="584" class="cbody">扫描「已确认且未发信」的记录</text>
+
+  <rect class="card" x="1294" y="660" width="222" height="100" rx="8"/>
+  <text x="1312" y="692" class="ctitle">发确认邮件给学生</text>
+  <text x="1312" y="718" class="cbody">附自动生成的《布展申请</text>
+  <text x="1312" y="738" class="cbody">表》PDF</text>
+
+  <rect class="card" x="1294" y="800" width="222" height="56" rx="8"/>
+  <text x="1312" y="834" class="ctitle">回写「已发」标记</text>
+</g>
+
+<!-- ══ 线上标签 ══ -->
+<g class="f">
+  <rect x="1330" y="356" width="132" height="30" rx="15" fill="#fdfcfa" stroke="#e2ded9" stroke-width="1.1"/>
+  <text x="1396" y="376" class="note" text-anchor="middle" font-size="11">回写「已发」标记</text>
+
+  <rect x="562" y="906" width="276" height="30" rx="15" fill="#fdfcfa" stroke="#e2ded9" stroke-width="1.1"/>
+  <text x="700" y="926" class="note" text-anchor="middle" font-size="11">确认邮件（附《布展申请表》PDF）</text>
+</g>
+
+<!-- ══ 图例 ══ -->
+<g class="f" transform="translate(0,1008)">
+  <rect x="36"  y="-9" width="15" height="15" rx="3" fill="#eff5fc" stroke="#d3e0ee" stroke-width="1"/>
+  <text x="59"  y="4" class="lg">Vercel · 前端 + 同源接口</text>
+
+  <rect x="226" y="-9" width="15" height="15" rx="3" fill="#eaf9f1" stroke="#bdd9ca" stroke-width="1"/>
+  <text x="249" y="4" class="lg">飞书多维表格 · 唯一数据源</text>
+
+  <rect x="451" y="-9" width="15" height="15" rx="3" fill="#fef2e5" stroke="#f0dcc2" stroke-width="1"/>
+  <text x="474" y="4" class="lg">腾讯云函数 SCF · 定时发信</text>
+
+  <path d="M676,-2 H710" stroke="#6f6963" stroke-width="1.8" fill="none"/>
+  <text x="720" y="4" class="lg">数据流向</text>
+
+  <path d="M806,-2 H840" stroke="#9b9590" stroke-width="1.6" stroke-dasharray="7 6" fill="none"/>
+  <text x="850" y="4" class="lg">读取 / 回写</text>
+</g>
+</svg>
