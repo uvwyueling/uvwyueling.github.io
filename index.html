@@ -31,10 +31,6 @@
 // 项目数据 - 数据可视化 / 数据分析 / AI 研究 / 独立开发
 const R = (typeof window !== 'undefined' && window.__resources) || {};
 const PROJECTS = [
-  // ===== 新项目占位符 · 左上角第一位 =====
-  // 待补充：title / en / year / role / desc / tags，
-  // 配图放到 images/09.png 后把 image 改成 R.img09 || 'images/09.png'，
-  // 有独立展示页时打开 page / newTab 两行。
   {
     n: '09',
     title: '学院展厅预约自动化系统',
@@ -43,7 +39,7 @@ const PROJECTS = [
     role: '设计 / 开发',
     desc: '解决本职工作痛点、个人搭建并维护的一套跨前端、轻量数据库与云函数的展览场地预约自动化系统，实现档期自助预约、冲突校验、分级审批与邮件通知的全链路闭环。',
     tags: ['AI', '全栈', '独立开发','飞书自动化'], 
-    image: R.img00 || 'images/09.jpeg',
+    image: R.img09 || 'images/09.webp',
     page: 'exhibition-booking_page.html',
     newTab: true,
     links: [
@@ -51,24 +47,6 @@ const PROJECTS = [
       { kind: 'GITHUB', href: 'https://github.com/uvwyueling/exhibition-booking' },
     ],
   },
-
-{
-    n: '01',
-    title: '智能模拟面试官',
-    en: 'AI Mock Interviewer',
-    year: '2026',
-    role: '设计 / 开发 / 可视化',
-    desc: '基于 LLM 的智能模拟面试工具，按目标岗位描述定制问题并生成可视化反馈定位薄弱项。通过竞品调研锁定"反馈可视化 + 垂直岗位"差异化空白，独立完成产品全链路。',
-    tags: ['AI', 'LLM', '独立开发', '数据可视化'],
-    image: R.img01 || 'images/01.png',
-    imageBorder: true,
-    page: 'echo-interview_page.html',
-    links: [
-      { kind: 'WEBSITE', href: 'https://echo-interview.online/' },
-      { kind: 'GITHUB', href: 'https://github.com/uvwyueling/ai-interview-simulator' },
-    ],
-  },
-
 
 
   {
@@ -79,7 +57,7 @@ const PROJECTS = [
     role: '设计 / 开发',
     desc: '',
     tags: ['AI', 'LLM', '独立开发', '数据可视化', 'Python'],
-    image: R.img07 || 'images/07.png',
+    image: R.img07 || 'images/07.webp',
     page: 'data-viz-studio-skill.html',
     newTab: true,
     links: [],
@@ -92,7 +70,7 @@ const PROJECTS = [
     role: '设计 / 开发 / 可视化',
     desc: '基于 LLM 的智能模拟面试工具，按目标岗位描述定制问题并生成可视化反馈定位薄弱项。通过竞品调研锁定"反馈可视化 + 垂直岗位"差异化空白，独立完成产品全链路。',
     tags: ['AI', 'LLM', '独立开发', '数据可视化'],
-    image: R.img01 || 'images/01.png',
+    image: R.img01 || 'images/01.webp',
     imageBorder: true,
     page: 'echo-interview_page.html',
     links: [
@@ -108,7 +86,7 @@ const PROJECTS = [
     role: '数据分析 / 可视化',
     desc: '针对服装专业毕业率从 100% 跌至 68% 的异常，独立完成数据建模与归因分析，识别"专业调剂政策"为关键原因，推动学院改革培养机制。',
     tags: ['归因分析', '数据可视化', '数据清洗', 'Python'],
-    image: R.img02 || 'images/02.png',
+    image: R.img02 || 'images/02.webp',
     links: [
       { kind: 'ZHIHU', href: 'https://zhuanlan.zhihu.com/p/2035758992316703292' },
       { kind: 'NOTION', href: 'https://www.notion.so/yuel/3207761aa52a80778bfbf14fbb50f8f6' },
@@ -123,7 +101,7 @@ const PROJECTS = [
     role: '数据分析 / 可视化',
     desc: '基于公开骑行数据建立用户分层框架，识别占 19.8% 的"隐形通勤者"高转化群体，设计"年度账单"转化策略，按 3% 转化率测算预期带来约 35.6 万美元新增 ARR。',
     tags: ['经营分析', '数据清洗', 'Python', '数据可视化'],
-    image: R.img03 || 'images/03.png',
+    image: R.img03 || 'images/03.webp',
     links: [
       { kind: 'NOTION', href: 'https://www.notion.so/yuel/3207761aa52a80bb9ccdf325b4885960' },
       { kind: 'GITHUB', href: 'https://github.com/uvwyueling/bike_share_analysis' },
@@ -138,7 +116,7 @@ const PROJECTS = [
     role: '研究 / 设计 / 可视化',
     desc: '研究生毕业设计：从非计算机背景出发，自学深度学习并训练图像识别模型，总结出影响识别表现的三个关键因素，沉淀出快速进入复杂新领域的学习方法论。',
     tags: ['AI', 'CNN', '数据可视化', '实验'],
-    image: R.img04 || 'images/04.png',
+    image: R.img04 || 'images/04.webp',
     imageBorder: true,
     links: [
       { kind: 'WEBSITE', href: 'visual-perception-machine.html' },
@@ -152,7 +130,7 @@ const PROJECTS = [
     role: '研究 / 设计 / 开发 / 可视化',
     desc: '米兰理工 DensityDesign Lab 团队项目：将 Deepfake 换脸技术原理与社会风险，转化为公众可理解的网页交互体验，并亲手训练换脸模型理解其机制，2021 年与非营利组织合作上线。',
     tags: ['AI', '数据可视化', '实验', '交互设计'],
-    image: R.img05 || 'images/05.jpg',
+    image: R.img05 || 'images/05.webp',
     links: [
       { kind: 'WEBSITE', href: 'https://deepfakelab.theglassroom.org/' },
     ],
@@ -165,7 +143,7 @@ const PROJECTS = [
     role: '研究 / 设计 / 可视化',
     desc: '米兰理工 DensityDesign 团队研究项目：跨八国分析搜索引擎、YouTube 与应用商店中的 Deepfake 内容，揭示媒体渲染的威胁叙事与网络实际内容（多为娱乐化、易获取）之间的认知落差。',
     tags: ['AI', '数据可视化', '实验'],
-    image: R.img06 || 'images/06.jpg',
+    image: R.img06 || 'images/06.webp',
     links: [
       { kind: 'WEBSITE', href: 'https://densitydesign.github.io/teaching-dd15/course-results/es02/group08/' },
     ],
@@ -178,7 +156,7 @@ const PROJECTS = [
     role: '用户调查研究 / 交互设计 / 界面设计',
     desc: 'Cooking! Memo 是一款面向祖孙代际互动的烹饪产品，围绕 “智能厨房秤 + App” 的服务设计概念，让祖辈与孩子共同下厨的过程中，把家庭食谱与烹饪记忆数字化保存、代际传承。',
     tags: ['交互设计','用户洞察','产品设计','ARDUINO'],
-    image: R.img08 || 'images/08.jpg',
+    image: R.img08 || 'images/08.webp',
     links: [
       { kind: 'WEBSITE', href: 'https://cookingmemo.wixsite.com/discover' },
     ],

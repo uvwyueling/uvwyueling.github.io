@@ -326,6 +326,12 @@ textarea.input { min-height: 90px; resize: vertical; }
   padding: 8px 12px;
 }
 #viewer-bar button:hover { background: var(--color-accent); border-color: var(--color-accent); }
+#viewer-loading[hidden] { display: none; }
+#viewer-loading {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 13px; letter-spacing: 0.08em; margin: 0;
+  color: color-mix(in srgb, var(--color-bg) 75%, transparent); pointer-events: none;
+}
 #viewer-hint {
   position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
   font-size: 12px; letter-spacing: 0.05em; text-align: center;
@@ -376,7 +382,7 @@ textarea.input { min-height: 90px; resize: vertical; }
           <span style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(36px, 5vw, 58px); line-height: 1.1; letter-spacing: -0.02em; color: var(--color-accent); display: inline-block; vertical-align: -0.08em; margin: 0 2px;">27</span> 场</p>
         <figure style="flex: 1 1 400px; min-width: 0; margin: 0;">
           <button type="button" class="zoom" data-caption="旧流程：手工维护的 Numbers 排期表">
-            <img class="shot" src="images/08-manual-schedule.png?v=2" width="3166" height="2122" loading="lazy" decoding="async" alt="迁到系统之前手工维护的 Numbers 排期表：按年分成 2022 至 2026 五个工作表，逐行记录展览名称、布展日期、展览时间、撤展日期、展览位置与指导教师，位置一栏用蓝绿粉三色标出展厅、走廊与花园中庭。">
+            <img class="shot" src="images/08-manual-schedule.webp?v=1" data-full="images/08-manual-schedule-full.webp?v=1" width="1012" height="678" loading="lazy" decoding="async" alt="迁到系统之前手工维护的 Numbers 排期表：按年分成 2022 至 2026 五个工作表，逐行记录展览名称、布展日期、展览时间、撤展日期、展览位置与指导教师，位置一栏用蓝绿粉三色标出展厅、走廊与花园中庭。">
           </button>
           <figcaption style="font-size: 12px; margin-top: 10px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">原来的手工排期表 · 一年一个工作表</figcaption>
         </figure>
@@ -466,11 +472,11 @@ textarea.input { min-height: 90px; resize: vertical; }
             <!-- 不换行：两张长图永远左右并列，窄屏时一起等比收窄 -->
             <div style="flex: 0 1 440px; min-width: 0; display: flex; gap: clamp(10px, 1.6vw, 20px);">
               <figure style="flex: 1 1 0; min-width: 0; max-width: 210px; margin: 0;">
-              <div class="shot-scroll"><img class="shot" src="images/01-calendar.png?v=1" width="804" height="3642" loading="lazy" decoding="async" alt="前端预约页的三色月历：一屏展示三个月，绿色可约、浅红已被预约、黄色审核中。"></div>
+              <div class="shot-scroll"><img class="shot" src="images/01-calendar.webp?v=1" width="480" height="2174" loading="lazy" decoding="async" alt="前端预约页的三色月历：一屏展示三个月，绿色可约、浅红已被预约、黄色审核中。"></div>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">三色月历 · 可上下滚动</figcaption>
             </figure>
               <figure style="flex: 1 1 0; min-width: 0; max-width: 210px; margin: 0;">
-              <div class="shot-scroll"><img class="shot" src="images/07-confirm-page.png?v=1" width="804" height="2314" loading="lazy" decoding="async" alt="预约成功确认页：场地、展期、班级、指导教师、联系人逐项列出，并附下一步的海报规格要求。"></div>
+              <div class="shot-scroll"><img class="shot" src="images/07-confirm-page.webp?v=1" width="480" height="1381" loading="lazy" decoding="async" alt="预约成功确认页：场地、展期、班级、指导教师、联系人逐项列出，并附下一步的海报规格要求。"></div>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">确认页 · 可上下滚动</figcaption>
             </figure>
             </div>
@@ -492,7 +498,7 @@ textarea.input { min-height: 90px; resize: vertical; }
           <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">预约写入唯一数据源</h3>
           <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
             <figure style="flex: 1 1 380px; min-width: 0; margin: 0;">
-              <button type="button" class="zoom" data-caption="多维表格中的预约记录"><img class="shot" src="images/02-bitable.png?v=1" width="4296" height="1498" loading="lazy" decoding="async" alt="飞书多维表格里的预约记录表，一行一场展览，状态列显示已确认、已驳回、审核中。"></button>
+              <button type="button" class="zoom" data-caption="多维表格中的预约记录"><img class="shot" src="images/02-bitable.webp?v=1" data-full="images/02-bitable-full.webp?v=1" width="1010" height="352" loading="lazy" decoding="async" alt="飞书多维表格里的预约记录表，一行一场展览，状态列显示已确认、已驳回、审核中。"></button>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">多维表格中的预约记录</figcaption>
             </figure>
             <p style="flex: 1 1 280px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">提交后记录直接落进飞书多维表格。它同时是数据库和我的工作台：所有排期在一张表里，我不用再维护第二份 Excel。</p>
@@ -513,7 +519,7 @@ textarea.input { min-height: 90px; resize: vertical; }
           <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">超长展期自动触发人工介入</h3>
           <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
             <figure style="flex: 1 1 380px; min-width: 0; margin: 0;">
-              <button type="button" class="zoom" data-caption="飞书通知卡片"><img class="shot" src="images/03-feishu-card.png?v=1" width="2674" height="1654" loading="lazy" decoding="async" alt="飞书里收到的「异常展期预订待审核」通知卡片，写明展览名称、场地与起止日期。"></button>
+              <button type="button" class="zoom" data-caption="飞书通知卡片"><img class="shot" src="images/03-feishu-card.webp?v=1" width="1500" height="928" loading="lazy" decoding="async" alt="飞书里收到的「异常展期预订待审核」通知卡片，写明展览名称、场地与起止日期。"></button>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">飞书通知卡片</figcaption>
             </figure>
             <p style="flex: 1 1 280px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">展期超过 10 天的预约会自动推送通知到我的飞书，告诉我是哪个班、什么展览、哪位指导教师。系统替我盯着，我不必守着表看。</p>
@@ -534,7 +540,7 @@ textarea.input { min-height: 90px; resize: vertical; }
           <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">我只做真正需要判断的那一步</h3>
           <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
             <figure style="flex: 0 1 auto; width: clamp(170px, 24vw, 260px); margin: 0;">
-              <div class="frame"><img class="shot" src="images/04-mobile-review.png?v=1" width="1206" height="2622" loading="lazy" decoding="async" alt="手机上打开多维表格记录，把状态从「审核中」改成「已确认」的下拉选项。"></div>
+              <div class="frame"><img class="shot" src="images/04-mobile-review.webp?v=1" width="560" height="1218" loading="lazy" decoding="async" alt="手机上打开多维表格记录，把状态从「审核中」改成「已确认」的下拉选项。"></div>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">移动端改状态</figcaption>
             </figure>
             <p style="flex: 1 1 300px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">与指导教师确认后，我在表里把状态改成「已确认」或「已驳回」。整套流程里需要我动手的，只剩这一次点击。</p>
@@ -552,18 +558,18 @@ textarea.input { min-height: 90px; resize: vertical; }
           <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: clamp(21px, 2.3vw, 28px); line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 clamp(18px, 2vw, 26px);">确认邮件自动送达</h3>
           <div style="display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
             <figure style="flex: 0 1 auto; width: clamp(170px, 22vw, 240px); margin: 0;">
-              <div class="frame"><img class="shot" src="images/05-confirm-email.png?v=1" width="1206" height="2622" loading="lazy" decoding="async" alt="学生邮箱里收到的确认信：展览名称、场地、布展与撤展日期、指导教师，并附一份《布展申请表》PDF。"></div>
+              <div class="frame"><img class="shot" src="images/05-confirm-email.webp?v=1" width="520" height="1131" loading="lazy" decoding="async" alt="学生邮箱里收到的确认信：展览名称、场地、布展与撤展日期、指导教师，并附一份《布展申请表》PDF。"></div>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">学生收到的确认信</figcaption>
             </figure>
             <p style="flex: 1 1 320px; min-width: 0; font-size: 16.5px; line-height: 1.9; letter-spacing: 0.01em; margin: 0; color: color-mix(in srgb, var(--color-text) 85%, transparent);">状态一变，云函数在下一轮扫描时自动发出确认邮件——收件人、场地、日期、海报规格都已填好，这一步全程无人参与。确认信附一份填好的《布展申请表》PDF，字段从飞书记录自动填充、场地按单选自动打勾；腾讯云 SCF 里没有排版引擎，是用 pdfkit 直接生成、内嵌开源中文字体。</p>
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: clamp(16px, 2.4vw, 28px); margin-top: clamp(24px, 3vw, 36px);">
             <figure style="flex: 1 1 300px; min-width: 0; margin: 0;">
-              <button type="button" class="zoom" data-caption="SCF 定时触发规则"><img class="shot" src="images/06-scf-trigger.png?v=1" width="3166" height="1732" loading="lazy" decoding="async" alt="腾讯云 SCF 控制台的触发管理页，定时触发器的 cron 表达式为 0 */5 * * * ?，即每 5 分钟一次。"></button>
+              <button type="button" class="zoom" data-caption="SCF 定时触发规则"><img class="shot" src="images/06-scf-trigger.webp?v=1" data-full="images/06-scf-trigger-full.webp?v=1" width="922" height="504" loading="lazy" decoding="async" alt="腾讯云 SCF 控制台的触发管理页，定时触发器的 cron 表达式为 0 */5 * * * ?，即每 5 分钟一次。"></button>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">SCF 定时触发规则</figcaption>
             </figure>
             <figure style="flex: 1 1 300px; min-width: 0; margin: 0;">
-              <button type="button" class="zoom" data-caption="自动填好的《布展申请表》"><img class="shot" src="images/09-pdf-form.png?v=1" width="2088" height="1468" loading="lazy" decoding="async" alt="自动生成的《布展申请表》PDF：各字段由飞书记录填好，展览场地一栏按单选自动打勾。"></button>
+              <button type="button" class="zoom" data-caption="自动填好的《布展申请表》"><img class="shot" src="images/09-pdf-form.webp?v=1" width="1500" height="1055" loading="lazy" decoding="async" alt="自动生成的《布展申请表》PDF：各字段由飞书记录填好，展览场地一栏按单选自动打勾。"></button>
               <figcaption style="font-size: 12px; margin-top: 8px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">自动填好的《布展申请表》</figcaption>
             </figure>
           </div>
@@ -659,6 +665,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 <!-- ══ 全屏图片查看器 ══ -->
 <div id="viewer" hidden role="dialog" aria-modal="true" aria-label="图片全屏查看">
   <img id="viewer-img" alt="">
+  <p id="viewer-loading" hidden>载入原图…</p>
   <div id="viewer-bar">
     <span id="viewer-cap"></span>
     <button type="button" data-act="out" aria-label="缩小">−</button>
@@ -674,6 +681,7 @@ textarea.input { min-height: 90px; resize: vertical; }
   var viewer = document.getElementById('viewer');
   var img    = document.getElementById('viewer-img');
   var cap    = document.getElementById('viewer-cap');
+  var load   = document.getElementById('viewer-loading');
 
   var scale = 1, fit = 1, tx = 0, ty = 0;
   var natW = 0, natH = 0, opener = null;
@@ -716,21 +724,24 @@ textarea.input { min-height: 90px; resize: vertical; }
     opener = btn;
     cap.textContent = btn.getAttribute('data-caption') || '';
     img.alt = src.alt;
-    img.src = src.currentSrc || src.src;
+    img.src = src.dataset.full || src.currentSrc || src.src;
     viewer.hidden = false;
     document.documentElement.style.overflow = 'hidden';
     var start = function () {
+      load.hidden = true;
       natW = img.naturalWidth || parseFloat(src.getAttribute('width')) || 1000;
       natH = img.naturalHeight || parseFloat(src.getAttribute('height')) || 700;
       img.style.width = natW + 'px'; img.style.height = natH + 'px';
       fitToScreen();
     };
-    if (img.complete && img.naturalWidth) start(); else img.onload = start;
+    if (img.complete && img.naturalWidth) { start(); }
+    else { load.hidden = false; img.onload = start; img.onerror = function () { load.hidden = true; }; }
     viewer.querySelector('[data-act="close"]').focus();
   }
 
   function close() {
     viewer.hidden = true;
+    load.hidden = true;
     img.removeAttribute('src');
     document.documentElement.style.overflow = '';
     if (opener) { opener.focus(); opener = null; }
