@@ -1,0 +1,648 @@
+// 首页应用代码。源码，需构建：`npm run build` → assets/app.js
+// 内容按原三个 <script type="text/babel"> 块的顺序原样拼接，共用一个作用域。
+// 数据（PROJECTS / ME / ALL_TAGS）仍留在 index.html 的内联 <script> 里，作为全局变量在运行时解析。
+import React from "react";
+import * as ReactDOMClient from "react-dom/client";
+const ReactDOM = ReactDOMClient;
+window.React = React;        // index.html 里 boot() 会检查这两个
+window.ReactDOM = ReactDOM;
+
+// ===== 共用组件（原 shared.jsx）=====
+// 共享组件，支持浅色主题 - Placeholder 接受主题色
+
+// 简洁条纹占位图，颜色随主题切换
+function Placeholder({ label, theme, ratio = 16 / 10 }) {
+  const id = `sp-${Math.random().toString(36).slice(2, 8)}`;
+  const { tile, stripe, ink, accent } = theme;
+  return (
+    <div style={{
+      position: 'relative', width: '100%', aspectRatio: ratio,
+      background: tile, overflow: 'hidden',
+    }}>
+      <svg width="100%" height="100%" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice"
+           style={{ position: 'absolute', inset: 0, display: 'block' }}>
+        <defs>
+          <pattern id={id} width="16" height="16" patternUnits="userSpaceOnUse"
+                   patternTransform="rotate(-28)">
+            <rect width="16" height="16" fill={tile} />
+            <line x1="0" y1="0" x2="0" y2="16" stroke={stripe} strokeWidth="3" />
+          </pattern>
+        </defs>
+        <rect width="400" height="250" fill={`url(#${id})`} />
+        <g stroke={ink} strokeWidth="1" fill="none" opacity="0.35">
+          <path d="M 10 10 L 10 26 M 10 10 L 26 10" />
+          <path d="M 390 10 L 390 26 M 390 10 L 374 10" />
+          <path d="M 10 240 L 10 224 M 10 240 L 26 240" />
+          <path d="M 390 240 L 390 224 M 390 240 L 374 240" />
+        </g>
+        <text x="200" y="130" textAnchor="middle"
+              fontFamily="'JetBrains Mono', monospace" fontSize="11"
+              fill={ink} opacity="0.55" letterSpacing="2">
+          [ {label} ]
+        </text>
+      </svg>
+      {accent && (
+        <div style={{
+          position: 'absolute', top: 12, right: 14,
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+          color: accent, letterSpacing: '0.14em',
+        }}>
+          ◉
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 链接 chip
+function LinkChip({ kind, accent, ink }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      fontFamily: "'JetBrains Mono', monospace", fontSize: 11,
+      letterSpacing: '0.08em', color: ink || accent,
+      borderBottom: `1px solid ${accent}`,
+      paddingBottom: 2, cursor: 'pointer',
+    }}>
+      {kind} <span style={{ fontSize: 13, color: accent }}>→</span>
+    </span>
+  );
+}
+
+// tag pill - 浅色版
+function Tag({ children, active, onClick, accent, ink, rule }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'inline-flex', alignItems: 'center',
+        padding: '5px 11px',
+        border: `1px solid ${active ? accent : rule}`,
+        background: active ? accent : 'transparent',
+        color: active ? '#fff' : ink,
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 11, letterSpacing: '0.04em',
+        cursor: 'pointer', transition: 'all .15s',
+      }}>
+      {children}
+    </button>
+  );
+}
+
+const FONT_SANS = "'Hanken Grotesk', system-ui, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif";
+const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+Object.assign(window, { Placeholder, LinkChip, Tag, FONT_SANS, FONT_MONO });
+
+// ===== 页面主体（原 variant-a.jsx）=====
+// 变体 A v2.2 · 响应式 - 桌面 / 平板 / 手机
+const THEME_A = {
+  bg: '#fafafa',
+  surface: '#f0eee9',
+  tile: '#e5e2dc',
+  stripe: '#cfcdc6',
+  ink: '#0a0e1a',
+  mute: '#5e6377',
+  rule: 'rgba(10,14,26,0.10)',
+  accent: '#2a6fdb',
+};
+
+// 邮箱：点击弹出「复制 / 写邮件」小菜单
+function EmailMenu({ email, T, placement = 'down' }) {
+  const [openMenu, setOpenMenu] = React.useState(false);
+  const [copied, setCopied] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!openMenu) return;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpenMenu(false); };
+    const onEsc = (e) => { if (e.key === 'Escape') setOpenMenu(false); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, [openMenu]);
+
+  const copy = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(email);
+      } else {
+        // file:// 或旧环境的兜底方案
+        const ta = document.createElement('textarea');
+        ta.value = email;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch (e) { /* 忽略：极个别浏览器禁用了剪贴板 */ }
+  };
+
+  const item = {
+    all: 'unset', cursor: 'pointer', display: 'block',
+    padding: '8px 14px', whiteSpace: 'nowrap',
+    fontFamily: FONT_MONO, fontSize: 11, letterSpacing: '0.06em',
+    color: T.ink, transition: 'background .12s, color .12s',
+  };
+  const hoverOn = (e) => { e.currentTarget.style.background = T.accent; e.currentTarget.style.color = '#fff'; };
+  const hoverOff = (e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = T.ink; };
+
+  return (
+    <span ref={ref} style={{ position: 'relative', display: 'inline-block' }}>
+      <button
+        onClick={() => setOpenMenu((v) => !v)}
+        title="点击：复制 / 写邮件"
+        style={{
+          all: 'unset', cursor: 'pointer', color: T.mute,
+          borderBottom: `1px dashed ${T.rule}`,
+        }}>
+        {email}
+      </button>
+      {openMenu && (
+        <div style={{
+          position: 'absolute', right: 0, zIndex: 30, minWidth: 134,
+          [placement === 'up' ? 'bottom' : 'top']: 'calc(100% + 6px)',
+          background: T.bg, border: `1px solid ${T.rule}`,
+          boxShadow: '0 8px 28px rgba(10,14,26,0.16)',
+        }}>
+          <button style={item} onMouseEnter={hoverOn} onMouseLeave={hoverOff} onClick={copy}>
+            {copied ? '已复制 ✓' : '复制邮箱'}
+          </button>
+          <a style={{ ...item, borderTop: `1px solid ${T.rule}` }}
+             href={`mailto:${email}`}
+             onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+             onClick={() => setOpenMenu(false)}>
+            写邮件 →
+          </a>
+        </div>
+      )}
+    </span>
+  );
+}
+
+// device: 'desktop' | 'tablet' | 'mobile'
+function VariantA({ flatFilter = true, borderless = true, device = 'desktop' }) {
+  const [activeTag, setActiveTag] = React.useState('全部');
+  const [openId, setOpenId] = React.useState(null);
+  const filtered = activeTag === '全部' ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(activeTag));
+  const T = THEME_A;
+  const open = openId ? PROJECTS.find((p) => p.n === openId) : null;
+  const isMobile = device === 'mobile';
+  const isTablet = device === 'tablet';
+  const isDesktop = device === 'desktop';
+
+  // device-specific spec
+  const S = isMobile ? {
+    padX: 20, padTop: 24, padBot: 18,
+    headerCols: '1fr', headerGap: 18,
+    slogan: 36, intro: 13, name: 17,
+    filterPadX: 20, filterPadY: 12,
+    gridCols: 'repeat(1, 1fr)', gridRows: 'none',
+    gridGap: 16, gridPadX: 20, gridPadY: 18,
+    tileH: 200,
+    drawerW: '100%',
+  } : isTablet ? {
+    padX: 32, padTop: 30, padBot: 22,
+    headerCols: '1.1fr 1fr', headerGap: 30,
+    slogan: 44, intro: 13.5, name: 18,
+    filterPadX: 32, filterPadY: 12,
+    gridCols: 'repeat(2, 1fr)', gridRows: 'none',
+    gridGap: 22, gridPadX: 32, gridPadY: 24,
+    tileH: 280,
+    drawerW: 520,
+  } : {
+    padX: 48, padTop: 36, padBot: 28,
+    headerCols: '1.25fr 1fr', headerGap: 48,
+    slogan: 60, intro: 14, name: 19,
+    filterPadX: 48, filterPadY: 14,
+    gridCols: 'repeat(3, 1fr)', gridRows: 'none',
+    gridGap: 28, gridPadX: 48, gridPadY: 32,
+    tileH: 320,
+    drawerW: 572,
+  };
+
+  return (
+    <div style={{
+      position: 'relative',
+      width: '100%', height: '100%',
+      background: T.bg, color: T.ink,
+      fontFamily: FONT_SANS,
+      display: 'flex', flexDirection: 'column',
+      overflow: 'visible',
+    }}>
+      {/* HEAD */}
+      <div style={{
+        padding: `${S.padTop}px ${S.padX}px ${S.padBot}px`,
+        display: 'grid', gridTemplateColumns: S.headerCols,
+        gap: S.headerGap, alignItems: 'end',
+        borderBottom: borderless ? 'none' : `1px solid ${T.rule}`,
+      }}>
+        <div>
+          <div style={{
+            fontFamily: FONT_MONO, fontSize: 10, color: T.accent,
+            letterSpacing: '0.2em', marginBottom: isMobile ? 10 : 14,
+          }}>
+            ── PORTFOLIO · 2019 / 2026
+          </div>
+          <h1 style={{
+            margin: 0, fontSize: S.slogan, fontWeight: 700, lineHeight: 1.2,
+            letterSpacing: '-0.03em', color: T.ink,
+          }}>
+            {(() => {
+              const raw = ME.slogan.replace('。', '');
+              const idx = raw.indexOf('，');
+              const line1 = idx >= 0 ? raw.slice(0, idx + 1) : raw;
+              const line2 = idx >= 0 ? raw.slice(idx + 1) : '';
+              return (
+                <React.Fragment>
+                  <span style={{ display: 'block' }}>{line1}</span>
+                  <span style={{ display: 'block' }}>
+                    {line2}<span style={{ color: T.accent }}>.</span>
+                  </span>
+                </React.Fragment>
+              );
+            })()}
+          </h1>
+        </div>
+        <div style={{
+          paddingLeft: isMobile ? 0 : 28,
+          paddingTop: isMobile ? 14 : 0,
+          borderLeft: isMobile ? 'none' : `1px solid ${T.rule}`,
+          borderTop: isMobile ? `1px solid ${T.rule}` : 'none',
+          fontSize: S.intro, color: T.mute, lineHeight: 1.6,
+        }}>
+          <div style={{
+            fontSize: S.name, color: T.ink, fontWeight: 600, marginBottom: 8,
+            letterSpacing: '-0.01em',
+          }}>
+            {ME.name} <span style={{ color: T.mute, fontWeight: 300 }}>/ {ME.enName}</span>
+          </div>
+          {ME.intro}
+          <div style={{
+            marginTop: 14, fontFamily: FONT_MONO, fontSize: 11,
+            letterSpacing: '0.08em', color: T.ink,
+          }}>
+            <span style={{ color: T.accent }}>●</span> OPEN&nbsp;TO&nbsp;WORK&nbsp;&nbsp;
+            <EmailMenu email={ME.email} T={T} placement="down" />
+          </div>
+        </div>
+      </div>
+
+      {/* FILTER BAR */}
+      <div style={{
+        position: 'sticky', top: 0, zIndex: 5,
+        display: 'flex',
+        alignItems: isTablet ? 'flex-start' : 'center',
+        gap: isMobile ? 10 : 16,
+        padding: `${S.filterPadY}px ${S.filterPadX}px`,
+        borderBottom: borderless ? 'none' : `1px solid ${T.rule}`,
+        background: flatFilter ? T.bg : T.surface,
+        overflowX: isMobile ? 'auto' : 'visible',
+        whiteSpace: isMobile ? 'nowrap' : 'normal',
+        flexShrink: 0,
+      }}>
+        <span style={{
+          fontFamily: FONT_MONO, fontSize: 10, color: T.mute,
+          letterSpacing: '0.14em', flexShrink: 0,
+          paddingTop: isTablet ? 7 : 0,
+        }}>
+          WORKS / {String(PROJECTS.length).padStart(2, '0')}
+        </span>
+        <span style={{
+          width: 1, height: 14, background: T.rule, flexShrink: 0,
+          marginTop: isTablet ? 6 : 0,
+        }} />
+        <div style={{
+          display: 'flex', gap: 6,
+          flexWrap: isMobile ? 'nowrap' : 'wrap',
+          flexShrink: isMobile ? 0 : 1,
+        }}>
+          {ALL_TAGS.map((t) => (
+            <Tag key={t} active={t === activeTag} onClick={() => setActiveTag(t)}
+              accent={T.accent} ink={T.ink} rule={T.rule}>{t}</Tag>
+          ))}
+        </div>
+        {!isMobile && (
+          <span style={{
+            marginLeft: 'auto', fontFamily: FONT_MONO, fontSize: 10,
+            color: T.mute, letterSpacing: '0.14em',
+            whiteSpace: 'nowrap',
+            alignSelf: isTablet ? 'flex-end' : 'auto',
+            paddingBottom: isTablet ? 7 : 0,
+          }}>
+            {filtered.length} 项 · 点击查看详情 →
+          </span>
+        )}
+      </div>
+
+      {/* IMAGE WALL */}
+      <div style={{
+        flex: 'none',
+        padding: `${S.gridPadY}px ${S.gridPadX}px`,
+        display: 'grid',
+        gridTemplateColumns: S.gridCols,
+        gridAutoRows: 'auto',
+        gap: S.gridGap,
+      }}>
+        {filtered.map((p, i) => (
+          <TileA key={p.n} p={p} i={i} T={T} device={device} onClick={() => {
+            if (p.page) {
+              if (p.newTab) {
+                window.open(p.page, '_blank', 'noopener');
+              } else {
+                window.location.href = p.page;
+              }
+            } else {
+              setOpenId(p.n);
+            }
+          }} />
+        ))}
+      </div>
+
+      {/* FOOTER */}
+      <footer style={{
+        flexShrink: 0,
+        padding: isMobile ? '14px 20px 18px' : `12px ${S.padX}px 18px`,
+        borderTop: `1px solid ${T.rule}`,
+        display: 'flex',
+        justifyContent: isMobile ? 'center' : 'space-between',
+        alignItems: 'center',
+        gap: 12,
+        fontFamily: FONT_MONO,
+        fontSize: 10.5,
+        letterSpacing: '0.1em',
+        color: T.mute,
+      }}>
+        <span>
+          © 2026 Yueling · Made&nbsp;with&nbsp;
+          <span style={{ color: T.accent, fontFamily: FONT_SANS, fontSize: 12 }}>💙</span>
+        </span>
+        {!isMobile && (
+          <EmailMenu email={ME.email} T={T} placement="up" />
+        )}
+      </footer>
+
+      {/* DRAWER */}
+      <DrawerA project={open} T={T} device={device} drawerW={S.drawerW} isDesktop={isDesktop} onClose={() => setOpenId(null)} />
+    </div>
+  );
+}
+
+function TileA({ p, i, T, device, onClick }) {
+  const [hover, setHover] = React.useState(false);
+  const isMobile = device === 'mobile';
+  // 在移动端，没有 hover，始终显示底部信息条
+  const showInfo = isMobile ? true : hover;
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        all: 'unset', cursor: 'pointer', display: 'block',
+        position: 'relative', overflow: 'hidden',
+        background: T.tile,
+        outline: hover ? `2px solid ${T.accent}` : `1px solid ${T.rule}`,
+        outlineOffset: hover ? -2 : -1,
+        transition: 'outline-color .15s',
+        width: '100%', aspectRatio: '16 / 10',
+      }}>
+      {/* image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        transform: hover ? 'scale(1.04)' : 'scale(1)',
+        filter: hover ? 'none' : 'saturate(0.9)',
+        transition: 'transform .5s cubic-bezier(.2,.7,.3,1), filter .3s',
+      }}>
+        {p.image ? (
+          <img src={p.image} alt={p.en}
+            loading={i < 3 ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={i === 0 ? 'high' : undefined}
+            style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center',
+              display: 'block',
+              outline: p.imageBorder ? `1px solid rgba(42, 111, 219, 0.5)` : 'none',
+              outlineOffset: -1,
+            }} />
+        ) : (
+          <Placeholder label={p.en.toUpperCase()} theme={T} ratio={undefined} />
+        )}
+      </div>
+      {/* year badge */}
+      <span style={{
+        position: 'absolute', top: 12, left: 14, zIndex: 2,
+        fontFamily: FONT_MONO, fontSize: 11, letterSpacing: '0.1em',
+        color: T.accent,
+        background: T.bg, padding: '3px 8px',
+        border: `1px solid ${T.rule}`,
+      }}>
+        {p.year}
+      </span>
+      {/* hover/static info bar */}
+      <div style={{
+        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2,
+        padding: isMobile ? '12px 14px' : '14px 16px',
+        background: T.bg,
+        borderTop: `1px solid ${T.rule}`,
+        transform: showInfo ? 'translateY(0)' : 'translateY(100%)',
+        opacity: showInfo ? 1 : 0,
+        transition: 'opacity .18s, transform .28s cubic-bezier(.2,.7,.3,1)',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+        gap: 12,
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            fontSize: isMobile ? 16 : 19, fontWeight: 600, letterSpacing: '-0.015em', color: T.ink,
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {p.title}
+          </div>
+          <div style={{
+            marginTop: 2,
+            fontFamily: FONT_MONO, fontSize: 10.5, color: T.mute, letterSpacing: '0.06em',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {p.year} · {p.role}
+          </div>
+        </div>
+        <span style={{
+          flexShrink: 0,
+          fontFamily: FONT_MONO, fontSize: 10.5, color: T.accent,
+          letterSpacing: '0.08em',
+          padding: '5px 10px',
+          background: T.bg,
+          border: `1px solid ${T.accent}`,
+        }}>
+          展开 →
+        </span>
+      </div>
+    </button>
+  );
+}
+
+function DrawerA({ project, T, device, drawerW, isDesktop, onClose }) {
+  const open = !!project;
+  const isMobile = device === 'mobile';
+  return (
+    <React.Fragment>
+      {/* backdrop */}
+      <div onClick={onClose} style={{
+        position: 'fixed', inset: 0, zIndex: 10,
+        background: 'rgba(10,14,26,0.32)',
+        opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
+        transition: 'opacity .25s',
+      }} />
+      {/* drawer */}
+      <aside style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 11,
+        width: drawerW, maxWidth: '100%',
+        background: T.bg,
+        borderLeft: isMobile ? 'none' : `1px solid ${T.rule}`,
+        boxShadow: isMobile ? 'none' : '-30px 0 80px rgba(10,14,26,0.18)',
+        transform: open ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform .35s cubic-bezier(.2,.7,.3,1)',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {project && (
+          <React.Fragment>
+            <div style={{
+              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+              padding: isMobile ? '18px 20px' : '22px 32px',
+              borderBottom: `1px solid ${T.rule}`,
+            }}>
+              <button onClick={onClose} style={{
+                all: 'unset', cursor: 'pointer',
+                fontFamily: FONT_MONO, fontSize: 11,
+                color: T.ink, letterSpacing: '0.12em',
+                padding: '5px 11px',
+                border: `1px solid ${T.rule}`,
+                transition: 'border-color .15s, color .15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = T.accent;
+                e.currentTarget.style.color = T.accent;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = T.rule;
+                e.currentTarget.style.color = T.ink;
+              }}>
+                CLOSE ✕
+              </button>
+            </div>
+            <div style={{
+              padding: isMobile ? '22px 20px' : '28px 32px',
+              overflow: 'auto', flex: 1,
+            }}>
+              <div style={{
+                marginBottom: isMobile ? 22 : 26,
+                width: '100%', aspectRatio: '16 / 10',
+                background: T.tile, overflow: 'hidden',
+                border: project.imageBorder ? `1px solid rgba(42, 111, 219, 0.5)` : 'none',
+              }}>
+                {project.image ? (
+                  <img src={project.image} alt={project.en}
+                    style={{
+                      width: '100%', height: '100%',
+                      objectFit: 'cover', objectPosition: 'center',
+                      display: 'block',
+                    }} />
+                ) : (
+                  <Placeholder label={project.en.toUpperCase()} theme={T} ratio={16 / 10} />
+                )}
+              </div>
+              <h2 style={{
+                margin: 0, fontSize: isMobile ? 28 : 44, fontWeight: 600,
+                letterSpacing: '-0.025em', lineHeight: 1.08, color: T.ink,
+              }}>
+                {project.title}
+              </h2>
+              <div style={{
+                marginTop: 6, fontFamily: FONT_MONO, fontSize: 12,
+                color: T.mute, letterSpacing: '0.06em',
+              }}>
+                {project.en} · {project.role}
+              </div>
+              <p style={{
+                marginTop: isMobile ? 18 : 22,
+                fontSize: isMobile ? 14.5 : 15.5,
+                lineHeight: 1.75, color: T.ink,
+              }}>
+                {project.desc}
+              </p>
+              <div style={{ marginTop: 22, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {project.tags.map((t) => (
+                  <span key={t} style={{
+                    fontFamily: FONT_MONO, fontSize: 10, color: T.mute,
+                    letterSpacing: '0.08em', padding: '3px 8px',
+                    border: `1px solid ${T.rule}`,
+                  }}>{t}</span>
+                ))}
+              </div>
+              <div style={{
+                marginTop: 30, paddingTop: 22, borderTop: `1px solid ${T.rule}`,
+                display: 'flex', gap: isMobile ? 18 : 26, flexWrap: 'wrap',
+              }}>
+                {project.links.map((l) => (
+                  <a key={l.kind} href={l.href} target="_blank" rel="noopener noreferrer"
+                     style={{ textDecoration: 'none' }}>
+                    <LinkChip kind={l.kind} accent={T.accent} ink={T.ink} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </React.Fragment>
+        )}
+      </aside>
+    </React.Fragment>
+  );
+}
+
+window.VariantA = VariantA;
+
+// ===== 挂载层 =====
+// 根据真实窗口宽度推导断点（替代评审画板写死的 device）
+function useDevice() {
+  const get = () => {
+    const w = window.innerWidth;
+    if (w < 760) return 'mobile';
+    if (w < 1100) return 'tablet';
+    return 'desktop';
+  };
+  const [device, setDevice] = React.useState(get);
+  React.useEffect(() => {
+    const onResize = () => setDevice(get());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return device;
+}
+
+function Root() {
+  const VariantA = window.VariantA;
+  const device = useDevice();
+  // 所有断点：自然高度、整页可滚动（项目持续增加，图墙向下延伸）
+  const wrap = { minHeight: '100vh' };
+  return (
+    <div style={wrap}>
+      <VariantA device={device} />
+    </div>
+  );
+}
+
+// 等依赖就绪再渲染
+function boot() {
+  if (!window.VariantA || !window.React || !window.ReactDOM) {
+    return setTimeout(boot, 40);
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+}
+boot();

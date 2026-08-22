@@ -1,2 +1,4 @@
 .DS_Store
 images/_original/
+node_modules/
+.claude/
