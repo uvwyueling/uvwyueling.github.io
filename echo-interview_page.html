@@ -6,8 +6,11 @@
   <title>Portfolio · Echo Interview</title>
   <style>
     body { font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; background: #f1f5f9; }
-    .ring-soft { box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.06); }
-    .mock-shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.06); }
+    /* 描边 + 柔和投影。描边（rgb(226,232,240) 即 ring-slate-200）写进完整值里，
+       并用重复类名把特异性提到 .ring-1 之上——这样无论本 <style> 与 Tailwind
+       的样式表谁先谁后，都不会被 .ring-1 整条覆盖掉投影。 */
+    .ring-soft.ring-soft { box-shadow: 0 0 0 1px rgb(226, 232, 240), 0 2px 8px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.06); }
+    .mock-shadow.mock-shadow { box-shadow: 0 0 0 1px rgb(226, 232, 240), 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.06); }
   </style>
   <!-- 样式由 Tailwind CLI 预先生成（源码 src/echo.css，构建 `npm run build:echo`） -->
   <link rel="stylesheet" href="assets/echo.css?v=1" />
