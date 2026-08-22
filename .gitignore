@@ -2,3 +2,4 @@
 images/_original/
 node_modules/
 .claude/
+build/

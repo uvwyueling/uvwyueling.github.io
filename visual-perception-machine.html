@@ -4,17 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Visual Perception of the Machine · 机器的视觉感知</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hanken-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/spacemono-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* 自托管字体子集 —— 只含本页用到的 460 个字符，无任何外部请求。
+   改了文案必须重新生成，否则新字会掉到系统字体：
+     python3 tools/collect-chars.py && python3 tools/build-fonts.py --install
+   可变字体一个文件覆盖多个字重，所以 font-weight 写的是轴的范围。 */
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:100 900;font-display:swap;src:url('fonts/fraunces-var.woff2') format('woff2');}
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:100 900;font-display:swap;src:url('fonts/hanken-var.woff2') format('woff2');}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/spacemono-400.woff2') format('woff2');}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/spacemono-700.woff2') format('woff2');}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:200 900;font-display:swap;src:url('fonts/notoserifsc-var.woff2') format('woff2');}
+@font-face{font-family:'Noto Sans SC';font-style:normal;font-weight:100 900;font-display:swap;src:url('fonts/notosanssc-var.woff2') format('woff2');}
 :root{
   --paper:#F2ECE0; --paper-2:#E8E0D1; --paper-3:#DED4C2;
   --ink:#1C1815; --ink-soft:#4E473D; --muted:#8C8273;
   --line:rgba(28,24,21,.14); --line-2:rgba(28,24,21,.28);
   --red:#B23A2E; --red-2:#8A2B22; --teal:#19674F; --teal-2:#0E4A39;
-  --serif:"Fraunces","Noto Serif SC",Georgia,serif;
-  --sans:"Hanken Grotesk","Noto Sans SC",-apple-system,sans-serif;
+  --cjk-serif:"Songti SC","Source Han Serif SC","Noto Serif CJK SC","SimSun",serif;
+  --cjk-sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+  --serif:"Fraunces","Noto Serif SC",Georgia,var(--cjk-serif);
+  --sans:"Hanken Grotesk","Noto Sans SC",-apple-system,var(--cjk-sans);
   --mono:"Space Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -43,7 +55,7 @@ body::before{
 .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(48px,9vw,128px);
   line-height:.96;letter-spacing:-.02em;max-width:14ch}
 .hero h1 em{font-style:italic;color:var(--red)}
-.hero .zh{font-family:"Noto Serif SC",serif;font-weight:500;font-size:clamp(22px,3.4vw,40px);
+.hero .zh{font-family:"Noto Serif SC",var(--cjk-serif);font-weight:500;font-size:clamp(22px,3.4vw,40px);
   margin-top:18px;letter-spacing:.04em;color:var(--ink-soft)}
 .hero .sub{margin-top:36px;max-width:54ch;font-size:18px;color:var(--ink-soft)}
 .hero .sub .en{display:block;color:var(--muted);font-size:15px;margin-top:6px}
@@ -61,7 +73,7 @@ section{padding:120px 0;border-bottom:1px solid var(--line)}
 .shead{margin-bottom:40px}
 .shead h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.5vw,52px);
   line-height:1.05;letter-spacing:-.01em;margin-top:14px}
-.shead .zh{font-family:"Noto Serif SC",serif;font-size:clamp(18px,2.4vw,26px);color:var(--ink-soft);margin-top:8px}
+.shead .zh{font-family:"Noto Serif SC",var(--cjk-serif);font-size:clamp(18px,2.4vw,26px);color:var(--ink-soft);margin-top:8px}
 p{margin-bottom:1.25em}
 p .en{display:block;color:var(--muted);font-size:15px;margin-top:.35em;line-height:1.6}
 .lead{font-size:21px;line-height:1.7}
@@ -76,7 +88,7 @@ p .en{display:block;color:var(--muted);font-size:15px;margin-top:.35em;line-heig
 .incidents{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:36px 0}
 .inc{background:var(--paper-2);border:1px solid var(--line);padding:22px 24px}
 .inc .n{font-family:var(--mono);font-size:13px;color:var(--red);font-weight:700;margin-bottom:10px}
-.inc h4{font-family:"Noto Serif SC",serif;font-weight:600;font-size:18px;line-height:1.5;margin-bottom:6px}
+.inc h4{font-family:"Noto Serif SC",var(--cjk-serif);font-weight:600;font-size:18px;line-height:1.5;margin-bottom:6px}
 .inc p{margin:0;font-size:13.5px;color:var(--muted);font-family:var(--sans)}
 
 .flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:40px 0 0;
@@ -100,7 +112,7 @@ p .en{display:block;color:var(--muted);font-size:15px;margin-top:.35em;line-heig
 .step.active .step-inner{opacity:1;transform:none}
 .step .k{font-family:var(--mono);font-size:12px;color:var(--red);font-weight:700;
   letter-spacing:.12em;margin-bottom:14px}
-.step h3{font-family:"Noto Serif SC",serif;font-weight:600;font-size:23px;line-height:1.4;margin-bottom:12px}
+.step h3{font-family:"Noto Serif SC",var(--cjk-serif);font-weight:600;font-size:23px;line-height:1.4;margin-bottom:12px}
 .step p{font-size:16px;margin:0;color:var(--ink-soft)}
 .step p .en{font-size:13.5px}
 
