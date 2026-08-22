@@ -1,0 +1,5 @@
+/* 构建输入。产物：assets/echo.css（`npm run build:echo`）
+   echo-interview_page.html 自己的 3 条覆盖规则仍留在该页的 <style> 里。 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
