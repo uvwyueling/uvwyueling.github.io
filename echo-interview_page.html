@@ -11,6 +11,40 @@
        的样式表谁先谁后，都不会被 .ring-1 整条覆盖掉投影。 */
     .ring-soft.ring-soft { box-shadow: 0 0 0 1px rgb(226, 232, 240), 0 2px 8px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.06); }
     .mock-shadow.mock-shadow { box-shadow: 0 0 0 1px rgb(226, 232, 240), 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.06); }
+
+    /* 版本时间轴 · 一条连续轴，标签上下交错。
+       类名 Tailwind 不生成同名规则，故不受本 <style> 与其样式表先后顺序的影响
+       （对比 .ring-soft 当初被 .ring-1 整条覆盖的那次）。
+       每个节点两行两列：左列日期/版本右对齐、圆点落其上，右列标题/描述左对齐向右延伸。
+       DOM 顺序恒为 [版本+标题][日期+描述]，上侧节点靠 column-reverse 翻转，
+       使「标题行」在轴两侧都紧贴轴——一套标记两种朝向。
+       块宽 216px = 日期列 40 + 间隔 12 + 文本列 164；文本列两行容量 328px，
+       最长描述实测 294px，故描述自然换行、最多两行，无需缩字号。
+       交错仅在 ≥1200px 启用：同侧间距 = 2 ×（内容宽 − 块宽）/ 7，
+       1200px 处内容宽 1056px 给出 240px，尚余 24px 间隙；真正重叠要到视口 < 1116px。 */
+    .tl-axis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1rem; }
+    .tl-rail { display: none; }
+    .tl-dot { display: block; width: 10px; height: 10px; border-radius: 9999px;
+              background: rgb(203, 213, 225); box-shadow: 0 0 0 4px #fff; margin-bottom: .75rem; }
+    .tl-row { display: flex; gap: 8px; align-items: baseline; }
+    @media (min-width: 768px) { .tl-axis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (min-width: 1200px) {
+      .tl-axis { display: block; position: relative; height: 150px; }
+      .tl-rail { display: block; position: absolute; left: 0; right: 0; top: 50%;
+                 height: 1px; background: rgb(226, 232, 240); }
+      .tl-node { position: absolute; top: 50%; left: var(--x); width: 0; }
+      .tl-dot { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); margin: 0; }
+      .tl-lb { position: absolute; left: 0; margin-left: -20px; width: 216px;
+               display: flex; flex-direction: column; }
+      .tl-up .tl-lb { flex-direction: column-reverse; bottom: 14px; }
+      .tl-dn .tl-lb { top: 14px; }
+      .tl-row { gap: 12px; }
+      .tl-meta { flex: none; width: 40px; text-align: right; }
+      /* 上侧节点自下而上读（描述在上、标题贴轴），日期须与描述的「最后一行」对齐，
+         否则它会停在描述第一行、与下方的版本号之间空出一整行，左侧 meta 列被拉断。
+         下侧节点方向相反，首行基线本就正确，不动。 */
+      .tl-up .tl-row { align-items: last baseline; }
+    }
   </style>
   <!-- 样式由 Tailwind CLI 预先生成（源码 src/echo.css，构建 `npm run build:echo`） -->
   <link rel="stylesheet" href="assets/echo.css?v=1" />
@@ -336,103 +370,141 @@
       </div>
     </div>
 
-    <!-- Version timeline · What's New (B: highlight card + full compressed axis) ─── -->
+    <!-- Version timeline · What's New (highlight card + zigzag axis) ─── -->
     <div class="mb-8 pb-8 border-b border-slate-100">
       <div class="flex items-baseline justify-between mb-5">
         <div class="flex items-baseline gap-2.5">
           <span class="text-[14px] font-semibold text-slate-900">持续迭代</span>
           <span class="text-[11px] text-slate-400 uppercase tracking-[0.18em] font-semibold">What's New</span>
         </div>
-        <div class="text-[11px] text-slate-400 font-medium">v0.1 → v0.12 · 从「跑通」到「面向真人内测」</div>
+        <div class="text-[11px] text-slate-400 font-medium">v0.1 → v0.14 · 从「跑通」到「用真实数据找断点」</div>
       </div>
 
       <!-- Current-version highlight card (latest, seen first) -->
       <div class="bg-indigo-50/70 ring-1 ring-indigo-100 rounded-xl px-4 py-3.5 mb-6">
         <div class="flex items-center gap-2 mb-1.5">
-          <span class="text-[13px] font-mono font-semibold text-indigo-600">v0.12</span>
-          <span class="text-[11px] font-mono text-indigo-400">07/24</span>
+          <span class="text-[13px] font-mono font-semibold text-indigo-600">v0.14</span>
+          <span class="text-[11px] font-mono text-indigo-400">08/30</span>
           <span class="text-[9px] px-2 py-px rounded-full bg-indigo-600 text-white font-semibold uppercase tracking-wider">当前</span>
         </div>
-        <div class="text-[13px] font-semibold text-indigo-900">留住愿意深聊的人</div>
+        <div class="text-[13px] font-semibold text-indigo-900">混合语音识别</div>
         <div class="text-[12px] text-indigo-800/80 leading-relaxed mt-0.5">
-          反馈页底部可留下联系方式（我请你喝咖啡 ☕️），差评能就地写原因——把最真实的用户声音收进来
+          浏览器实时出初稿，可选上传云端换更准的转写——两级降级，默认不离开本机
         </div>
       </div>
 
-      <!-- Full compressed axis · every milestone visible, no scrolling -->
-      <div class="relative pt-4 border-t border-slate-100">
-        <!-- continuous rail behind the dots -->
-        <div class="hidden lg:block absolute top-[21px] left-1 right-1 h-px bg-slate-200"></div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-6 relative">
-          <!-- v0.1 -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.1</span>
-              <span class="text-[10px] text-slate-400 font-mono">05/25</span>
+      <!-- 日期取自实际提交，非 CHANGELOG 记录日（两者有出入，v0.10 差六周） -->
+      <div class="pt-4 border-t border-slate-100">
+        <div class="tl-axis">
+          <div class="tl-rail"></div>
+          <div class="tl-node tl-up" style="--x:1.89%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.1</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">核心链路跑通</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">05/24</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">简历+JD → 出题 → 语音作答 → 五维反馈</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">核心链路跑通</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">简历+JD → 生成问题 → 语音作答 → 五维反馈</div>
           </div>
-
-          <!-- v0.2 -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.2</span>
-              <span class="text-[10px] text-slate-400 font-mono">05/26</span>
+          <div class="tl-node tl-dn" style="--x:13.25%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.2</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">动态追问 · 贴近真实</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">05/26</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">3 主问题 + 最多 3 轮实时追问，会顺着你的回答挖深</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">动态追问 · 贴近真实</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">3 主问题 + 最多 3 轮实时追问，会顺着你的回答挖深</div>
           </div>
-
-          <!-- v0.3 -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.3</span>
-              <span class="text-[10px] text-slate-400 font-mono">05/28</span>
+          <div class="tl-node tl-up" style="--x:24.62%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.3</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">反馈有据可查</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">05/31</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">每条评价都引用你说过的话 · 刷新不丢 · 导出 PDF</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">体验打磨</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">三列反馈页 · 进度不丢 · 一键导出 PDF 报告</div>
           </div>
-
-          <!-- v0.8 · pre-beta hardening -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.8</span>
-              <span class="text-[10px] text-slate-400 font-mono">06/09</span>
+          <div class="tl-node tl-dn" style="--x:35.98%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.8</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">内测级健壮性</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">06/09</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">手机端适配 · PDF 简历解析 · 隐私说明 · 超时不再无限转圈</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">内测级健壮性</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">手机端适配 · PDF 简历解析 · 刷新不丢进度 · 隐私说明</div>
           </div>
-
-          <!-- v0.10 · job-neutral + adaptive follow-up -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.10</span>
-              <span class="text-[10px] text-slate-400 font-mono">06/11</span>
+          <div class="tl-node tl-up" style="--x:47.35%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.10</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">不止技术岗</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">07/23</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">按岗位自动出题；答不上来时 AI 会放慢、给你方向</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">不止技术岗</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">按岗位自动出题；答不上来时 AI 会放慢、给你方向</div>
           </div>
-
-          <!-- v0.11 · perceived-speed + mic guidance -->
-          <div>
-            <div class="w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white mb-3"></div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-[12px] font-mono font-semibold text-slate-500">v0.11</span>
-              <span class="text-[10px] text-slate-400 font-mono">07/23</span>
+          <div class="tl-node tl-dn" style="--x:58.71%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.11</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">等待不再干等</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">07/24</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">反馈生成有实时进度；麦克风被拒时给出可操作引导</span>
+              </div>
             </div>
-            <div class="text-[12px] font-semibold text-slate-800 mt-1">等待不再干等</div>
-            <div class="text-[11px] text-slate-500 leading-snug mt-1">反馈生成有实时进度；麦克风被拒时给出可操作引导</div>
+          </div>
+          <div class="tl-node tl-up" style="--x:70.07%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.12</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">录音不再动不动就断</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">07/29</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">埋点发现有人每题重点麦克风 10 次；瞬断改为自动续听</span>
+              </div>
+            </div>
+          </div>
+          <div class="tl-node tl-dn" style="--x:81.44%">
+            <span class="tl-dot"></span>
+            <div class="tl-lb">
+              <div class="tl-row">
+                <span class="tl-meta text-[12px] font-mono font-semibold text-slate-500">v0.13</span>
+                <span class="tl-text text-[12px] font-semibold text-slate-800">先看见价值，再决定投入</span>
+              </div>
+              <div class="tl-row mt-1">
+                <span class="tl-meta text-[10px] font-mono text-slate-400">08/12</span>
+                <span class="tl-text text-[11px] text-slate-500 leading-snug">不用上传就能看完整样例报告；键盘作答不再被误判压分</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
 
     <!-- Footer ─────────────────────────────────────────────────────── -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -444,7 +516,7 @@
         <div class="hidden sm:block w-px h-10 bg-slate-200"></div>
         <div>
           <div class="text-[10px] text-slate-400 uppercase tracking-[0.18em] font-semibold mb-1.5">Stack</div>
-          <div class="text-[13px] text-slate-700 font-medium">Next.js 14 · TypeScript · Zod · Web Speech</div>
+          <div class="text-[13px] text-slate-700 font-medium">Next.js 14 · TypeScript · Zod · Web Speech · 讯飞 OST</div>
         </div>
         <div class="hidden sm:block w-px h-10 bg-slate-200"></div>
         <div>
